@@ -1,0 +1,7 @@
+#Para compilar el contenedor
+`docker build -t pptmagnum-backend .`
+# Para accederlo 
+docker run -d -p 8000:8080 --name ppt-magnum-backend-container ppt-magnum-backend
+
+# Para acceder a la informaci´on
+curl http://51.222.141.101:8000/

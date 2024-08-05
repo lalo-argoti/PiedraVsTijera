@@ -1,0 +1,13 @@
+<div class="codigo-form-container">
+  <h2>Bienvenido al juego</h2>
+  <!-- Contenido del juego aquí -->
+  <form (ngSubmit)="onSubmit()">
+   <div class="form-group">
+    <label for="playerName">Tu nombre:</label>
+    <input type="text" id="playerName" [(ngModel)]="playerName" name="playerName" class="texto-em" required />
+   </div>
+    <div class="button-group">
+    <button type="submit" class="btn btn-primary">Enviar</button>
+    </div>
+  </form>
+</div>

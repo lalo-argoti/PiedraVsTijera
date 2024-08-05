@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../buildMultiTargeting/ppt-magnum-backend.props" />
+</Project>

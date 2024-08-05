@@ -1,0 +1,26 @@
+<div class="codigo-form-container">
+  <div class="code-display">
+    <p><strong>Código generado:</strong> {{ generatedCode }}</p>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" #codigoForm="ngForm">
+    <div class="form-group">
+      <label for="inputCode">Código (opcional):</label>
+      <input
+        id="inputCode"
+        name="inputCode"
+        type="text"
+        [(ngModel)]="inputCode"
+        class="texto-em"
+      />
+
+    </div>
+    <div class="button-group">
+      <button type="submit" class="btn btn-primary">Enviar Código</button>
+      <button type="button" class="btn btn-secondary" (click)="useGeneratedCode()">Entrar con Código Generado</button>
+    </div>
+  </form>
+
+  <!-- Muestra el JSON simulado (opcional) -->
+
+</div>

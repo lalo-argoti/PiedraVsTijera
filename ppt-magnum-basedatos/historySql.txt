@@ -1,0 +1,1 @@
+  397  docker run -d   --name mysql_container   -e MYSQL_ROOT_PASSWORD=my_secure_root_password   -e MYSQL_DATABASE=my_database   -e MYSQL_USER=my_user   -e MYSQL_PASSWORD=my_secure_user_password   -p 3306:3306   mysql:8.0
