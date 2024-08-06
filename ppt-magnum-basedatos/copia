@@ -1,0 +1,37 @@
+-- Crear un nuevo usuario para prueba
+CREATE USER 'sa'@'%' IDENTIFIED BY 'password123';
+
+-- Otorgar todos los privilegios al nuevo usuario en la base de datos Magnum_ppt
+GRANT ALL PRIVILEGES ON Magnum_ppt.* TO 'test_user'@'%';
+
+-- Aplicar los cambios
+FLUSH PRIVILEGES;
+
+CREATE DATABASE Magnum_ppt;
+USE Magnum_ppt;
+CREATE TABLE Usuario (
+    Id VARCHAR(50) PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL,
+    Puntos INT NOT NULL DEFAULT 0,
+    TiradaActual INT NOT NULL DEFAULT 0
+);
+
+-- Crear la tabla Juego
+CREATE TABLE Juegos (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    Jugador1 VARCHAR(100),
+    Jugador2 VARCHAR(100),
+    PuntajeJ1 INT DEFAULT 0,
+    PuntajeJ2 INT DEFAULT 0,
+    CodigoInscrip VARCHAR(50) NOT NULL
+);
+
+-- Crear la tabla Partida
+CREATE TABLE Partidas (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    UsuarioLocalId VARCHAR(50),
+    UsuarioRemotoId VARCHAR(50),
+    CodigoJuego VARCHAR(50) NOT NULL,
+    TiradaServidor INT,
+    TiradaInvitado INT
+);

@@ -62,8 +62,8 @@ namespace ppt.Services
                     juego.Jugador1 = jugador;
                 }
                 else
-                {
-                    return false; // Ya hay un jugador en la posición 1
+                {  if (juego.Jugador1!=jugador)
+                   {     return false; }// Ya hay un jugador en la posición 1
                 }
             }
             else if (codigo.Length == 5)
@@ -74,7 +74,8 @@ namespace ppt.Services
                 }
                 else
                 {
-                    return false; // Ya hay un jugador en la posición 2
+                    if (juego.Jugador2!=jugador)
+                   { return false;} // Ya hay un jugador en la posición 2
                 }
             }
             else

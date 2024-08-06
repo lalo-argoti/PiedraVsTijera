@@ -4,33 +4,24 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore; // Necesario para EF Core
 using ppt.Data; // Asegúrate de que el namespace coincida
 using ppt.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
-
-//using MySql.EntityFrameworkCore.Extensions; // Namespace para MySqlServerVersion
+using MySql.EntityFrameworkCore.Extensions; // Namespace para MySqlServerVersion
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Define el nombre de la política CORS
+private readonly string _myCorsPolicy = "MyCorsPolicy";
+
 // Configuración de CORS: Permite solicitudes desde el origen especificado
-var _myCorsPolicy = "Front"; // Nombre de la política CORS
-
-        builder.Services.AddCors(
-            options => {
-                options.AddPolicy("Front",
-                    policy => {
-                        policy.WithOrigins("http://51.222.141.101:4201")
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials();
-                    });
-            });
-
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(_myCorsPolicy, builder =>
     {
-        options.Cookie.Name = "Sesion";
-        // Configuración adicional si es necesaria
+        builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost:4201")
+               .AllowAnyHeader()
+               .AllowAnyMethod();
     });
+});
 
 // Configuración de la cadena de conexión a la base de datos
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -51,13 +42,12 @@ if (app.Environment.IsDevelopment())
 }
 
 // Configuración de CORS: Aplicar la política CORS definida
-app.UseCors("Front");
+app.UseCors(_myCorsPolicy);
 
 // Configuración del middleware de enrutamiento: Habilita el enrutamiento de solicitudes
 app.UseRouting();
 
 // Agregar autorización: Permite la autorización de solicitudes, si es necesario
-//app.UseAuthentication();  
 app.UseAuthorization();
 
 // Mapear los controladores a las rutas: Define las rutas para los controladores

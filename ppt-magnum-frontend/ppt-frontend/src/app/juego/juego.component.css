@@ -1,0 +1,27 @@
+      .svg-container {
+            display: flex;
+            gap: 10px;
+            margin: 20px;
+        }
+        .svg-item {
+            cursor: pointer;
+            width: 100px;
+            height: 100px;
+            transition: transform 0.3s ease; /* Smooth rotation transition */
+        }
+        .svg-item:hover {
+            transform: rotate(360deg); /* Rotate 360 degrees on hover */
+        }
+
+              .svg-item.clicked {
+            transform: scale(1.5); /* Scale up to 1.5 times on click */
+        }
+        #output {
+            margin-top: 20px;
+            font-size: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            width: 100px;
+            text-align: center;
+        }
+

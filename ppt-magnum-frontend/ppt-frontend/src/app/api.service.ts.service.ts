@@ -6,11 +6,14 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiServiceTsService {
-  private apiUrl = 'https://mdn.github.io/learning-area/javascript/oojs/json/superheroes.json';
+  private apiUrl = 'http://51.222.141.101:8000/partido';
 
   constructor(private http: HttpClient) { }
 
-  getPartidoDetalles(codigo: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}?codigo=${codigo}`);
+
+  getPartidoDetalles(user: string, partida: string, movimiento: number): Observable<any> {
+  const url = `${this.apiUrl}?user=${user}&partida=${partida}&movimiento=${movimiento}`;
+  return this.http.get<any>(url);
+
   }
 }
