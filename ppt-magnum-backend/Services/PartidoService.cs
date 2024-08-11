@@ -98,11 +98,11 @@ namespace ppt.Services
 
             return true;
         }
-//-------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------
 
 
-public async Task<bool> RealizarMovimientoAsync(string partidaCodigo, string usuarioId, int tirada)
-{
+  public async Task<bool> RealizarMovimientoAsync(string partidaCodigo, string usuarioId, int tirada)
+  {
     _logger.LogInformation("Intentando obtener la partida con código {partidaCodigo}", partidaCodigo);
 
     // Extrae los últimos 5 dígitos del código de partida para la comparación
@@ -278,7 +278,7 @@ public async Task<bool> RealizarMovimientoAsync(string partidaCodigo, string usu
 
 
 
-	private string DeterminarGanador(int tiradaInvitado, int tiradaServidor, string invitado, string servidor)
+  private string DeterminarGanador(int tiradaInvitado, int tiradaServidor, string invitado, string servidor)
 	{
     // Implementar la lógica para determinar el ganador según piedra, papel o tijera.
     if (tiradaInvitado == tiradaServidor) return null; // Empate

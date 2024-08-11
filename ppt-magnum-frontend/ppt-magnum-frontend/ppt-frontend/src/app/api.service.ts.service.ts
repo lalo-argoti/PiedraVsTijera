@@ -6,14 +6,22 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiServiceTsService {
-  private apiUrl = 'http://51.222.141.101:8000/partido';
+  private apiUrl = 'http://51.222.141.101:8000';
 
   constructor(private http: HttpClient) { }
 
 
   getPartidoDetalles(user: string, partida: string, movimiento: number): Observable<any> {
-  const url = `${this.apiUrl}?user=${user}&partida=${partida}&movimiento=${movimiento}`;
+  const url = `${this.apiUrl}/partido?user=${user}&partida=${partida}&movimiento=${movimiento}`;
   return this.http.get<any>(url);
+     }
 
+  getEstadoJuego(codigo: string): Observable<any> {
+  const url = `${this.apiUrl}/estado?codigo=${encodeURIComponent(codigo)}`;
+  return this.http.get<any>(url);
   }
+
+  
+
+
 }

@@ -85,7 +85,7 @@ namespace ppt.Controllers
             var estadoJuego = await _partidaService.ObtenerEstadoJuegoAsync(codigo);
 
             if (estadoJuego == null)
-                return CreateJsonResponse("Juego no encontrado.", 793);
+                return CreateJsonResponse("Juego no encontrado."+estadoJuego, 793);
 
             return CreateJsonResponse("Estado del juego obtenido correctamente.", 973);
         }

@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiServiceTsService } from '../api.service.ts.service'; // Ajusta la ruta si es necesario
+import { Subscription, interval, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-juego',
@@ -8,10 +10,12 @@ import { ApiServiceTsService } from '../api.service.ts.service'; // Ajusta la ru
   templateUrl: './juego.component.html',
   styleUrls: ['./juego.component.css']
 })
-export class JuegoComponent implements OnInit {
+export class JuegoComponent implements OnInit  , OnDestroy{
   code: string | null = null;
   playerName: string | null = null;
   movimiento: number = 0; // Asigna un valor por defecto o actualízalo según sea necesario
+
+  private pollingSubscription: Subscription | undefined;
 
   constructor(
     private route: ActivatedRoute,
@@ -31,6 +35,7 @@ export class JuegoComponent implements OnInit {
         this.apiService.getPartidoDetalles(this.playerName, this.code, this.movimiento).subscribe(data => {
           console.log('Datos del partido:', data);
         });
+       this.startPolling(); /// Añadido para iniciar el polling
       }
     });
   }
@@ -43,5 +48,46 @@ export class JuegoComponent implements OnInit {
         console.log('Datos del partido:', data);
       });
     }
+
+
+
+
+
   }
+
+  private startPolling() { /// Añadido para método de polling
+  if (this.playerName && this.code) {
+    // Configura el polling cada 3 segundos (3000 ms)
+    this.pollingSubscription = interval(3000).pipe(
+      switchMap(() => {
+        // Asegúrate de que playerName y code no sean null
+        if (this.playerName && this.code) {
+          return this.apiService.getPartidoDetalles(this.playerName, this.code, this.movimiento);
+        } else {
+          // Manejo de error si falta un parámetro
+          console.error('playerName o code son null');
+          return of(null); // Usa un Observable vacío en caso de error
+        }
+      })
+    ).subscribe(data => {
+      if (data) {
+        console.log('Datos del partido (actualización periódica):', data);
+      }
+    }, error => {
+      console.error('Error durante el polling:', error);
+    });
+  } else {
+    // Manejo de caso cuando playerName o code son null
+    console.error('playerName o code no están definidos');
+  }
+}
+
+
+  ngOnDestroy() { /// Añadido para limpiar la suscripción
+    // Limpia la suscripción cuando el componente se desmonte
+    if (this.pollingSubscription) {
+      this.pollingSubscription.unsubscribe();
+    }
+  }
+
 }

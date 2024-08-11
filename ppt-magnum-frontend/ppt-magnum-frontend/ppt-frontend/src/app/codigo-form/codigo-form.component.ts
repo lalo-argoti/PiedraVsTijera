@@ -43,7 +43,7 @@ export class CodigoFormComponent implements OnInit {
   useGeneratedCode() {
     console.log('Entrando con código generado:', this.generatedCode,'Jugador local:',  this.playerName );
 
-    this.router.navigate(['/juego'], { queryParams: { code: this.generatedCode, playerName: this.playerName  }  });
+    this.router.navigate(['/juego'], { queryParams: { code: "S"+this.generatedCode, playerName: this.playerName  }  });
   }
 
   clearInput() {
