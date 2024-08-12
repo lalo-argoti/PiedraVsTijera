@@ -11,6 +11,12 @@ namespace ppt.Services
         Task<bool> CompletarPreparacionJuegoAsync(string codigo);
         Task<Juego?> ObtenerOCrearJuegoAsync(string codigo); 
         Task<bool> RealizarMovimientoAsync(string partida, string usuario, int movimiento);
-       Task<EstadoJuego?> ObtenerEstadoJuegoAsync(string codigoJuego);
+        Task<EstadoJuego?> ObtenerEstadoJuegoAsync(string codigoJuego);
+        Task<string> Tirada(string partida, int JugadaActual);
+        Task<string> Puntos(string partida);
+        Task<string> Movimiento(string partida, int JugadaActual);
+
+
     }
 }
+ 

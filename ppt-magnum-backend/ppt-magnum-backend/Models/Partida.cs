@@ -10,8 +10,8 @@ namespace ppt.Models
         public string UsuarioRemotoId { get; set; }
         public int Id { get; set; }
         public string CodigoJuego { get; set; }
-        public int ?  TiradaServidor { get; set; }        
-        public int ? TiradaInvitado { get; set; }        
+        public int ?  TiradaServidor { get; set; }=0;        
+        public int ? TiradaInvitado { get; set; } =0;       
 
     }
 }
