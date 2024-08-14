@@ -208,10 +208,122 @@ namespace ppt.Services
         }
 
 
-     // (= (= (= (= (= (= (= (= (= (= (= (= (= (= (= (= (= (=
+     // ===================================================================================
 
-	private async Task ComprobarGanadorYActualizarJuegoAsync(string codigoComparacionOriginal)
-	{
+     public async Task<string> Puntos(string partida )
+     {
+             string codigoComparacion = partida.Length == 6
+        ? partida.Substring(1, 5) // Obtiene del índice 1 al 5
+        : partida;
+
+                  var juego = await _context.Juegos
+        .Where(j => j.CodigoInscrip == codigoComparacion)
+        .FirstOrDefaultAsync();
+        if (juego == null)
+          return "";
+        int jugadoraA = 0;
+        int jugadoraB = 0;
+
+        if (partida.Length == 6)
+         {
+        // Longitud 6: Organiza los jugadores como Jugador1 y Jugador2
+        jugadoraA = juego.PuntajeJ1 ?? 0; // Asigna 0 si es null
+        jugadoraB = juego.PuntajeJ2 ?? 0; // Asigna 0 si es null
+         }
+       else
+         {
+        // Longitud no es 6
+        jugadoraA = juego.PuntajeJ2 ?? 0; // Asigna 0 si es null
+        jugadoraB = juego.PuntajeJ1 ?? 0; // Asigna 0 si es null
+          }
+
+
+         return ($"Tu: {jugadoraA} el o ella: {jugadoraB}");
+      }
+   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+     public async Task<string> Movimiento(string partida, int JugadaActual)
+     {  
+        string codigoComparacion = partida.Length == 6
+        ? partida.Substring(1, 5) // Obtiene del índice 1 al 5
+        : partida;
+        var recuerdo = new Partida();
+	recuerdo = await _context.Partidas.FirstOrDefaultAsync(p => p.CodigoJuego == codigoComparacion+".old");
+             if (recuerdo == null)
+          {
+        // Manejar el caso cuando la partida no se encuentra
+        return "¡Jugar!";
+         }
+
+        if (recuerdo.TiradaServidor.HasValue && recuerdo.TiradaInvitado.HasValue  && recuerdo.TiradaServidor.Value != 0 && recuerdo.TiradaInvitado.Value != 0)
+
+	{	
+	    string recuerdoTiradaServidor = TraducirN2PPT(recuerdo.TiradaServidor ?? 0);
+	    string recuerdoTiradaInvitado = TraducirN2PPT(recuerdo.TiradaInvitado ?? 0);
+	    if (partida.Length == 6)
+	        return $"Última tirada: {recuerdoTiradaServidor} VS {recuerdoTiradaInvitado}";	
+		else
+		     return  $"Última tirada: {recuerdoTiradaInvitado} VS  {recuerdoTiradaServidor}";
+	       }
+        return "¡Jugando!";
+     }
+
+
+    //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+     public async Task<string> Tirada(string partida, int JugadaActual)
+{
+    // Obtén el código para comparación
+    string codigoComparacion = partida.Length == 6
+        ? partida.Substring(1, 5) // Obtiene del índice 1 al 5
+        : partida;
+
+    // Obtén la partida desde la base de datos
+    var partidaDatos = await _context.Partidas
+        .FirstOrDefaultAsync(p => p.CodigoJuego.EndsWith(codigoComparacion));
+
+    if (partidaDatos == null)
+    {
+        return "->¿Piedra, papel o tijeras?";
+    }
+
+    // Variables para las jugadas
+    int jugadaA = JugadaActual;
+    int jugadaB = 0;
+
+    if (partida.Length == 6)
+    {
+        // Longitud 6: Organiza los jugadores como Jugador1 y Jugador2
+        jugadaA = partidaDatos.TiradaServidor ?? 0; // Asigna 0 si es null
+        jugadaB = partidaDatos.TiradaInvitado ?? 0; // Asigna 0 si es null
+    }
+    else
+    {
+        // Longitud no es 6
+        jugadaA = partidaDatos.TiradaInvitado ?? 0; // Asigna 0 si es null
+        jugadaB = partidaDatos.TiradaServidor ?? 0; // Asigna 0 si es null
+    }
+
+    // Lógica para determinar el estado del juego
+    if (jugadaA == 0)
+    {
+        return "->Tu oponente ya eligió";
+    }
+    else
+    {
+        if (jugadaB == 0)
+        {
+            return "->Esperando a tu oponente";
+        }
+        else
+        {
+            return $"Ronda: tu: {jugadaA} vs el o ella: {jugadaB}.OMITIR ";
+        }
+    }
+}
+
+
+     // (= (= (= (= (= (= (= (= (= (= (= (= (= (= (= (= (= (=
+private async Task ComprobarGanadorYActualizarJuegoAsync(string codigoComparacionOriginal)
+{
     // Recorta el código a 5 dígitos si es necesario
     string codigoComparacion = codigoComparacionOriginal.Length == 6
         ? codigoComparacionOriginal.Substring(1, 5) // Obtiene del índice 1 al 5
@@ -219,7 +331,7 @@ namespace ppt.Services
 
     // Obtener la partida para el código comparado
     var partida = await _context.Partidas
-        .FirstOrDefaultAsync(p => p.CodigoJuego.EndsWith(codigoComparacion));
+        .FirstOrDefaultAsync(p => p.CodigoJuego == codigoComparacion);
 
     if (partida == null)
     {
@@ -227,20 +339,16 @@ namespace ppt.Services
         return;
     }
 
-    // Verifica si ambas tiradas están presentes
     if (partida.TiradaInvitado.HasValue && partida.TiradaServidor.HasValue)
     {
         int tiradaInvitado = partida.TiradaInvitado.Value;
         int tiradaServidor = partida.TiradaServidor.Value;
 
-    
-
         // Determina el ganador
         string ganador = DeterminarGanador(tiradaInvitado, tiradaServidor, partida.UsuarioRemotoId, partida.UsuarioLocalId);
 
-        // Actualiza el puntaje en Juegos
         var juego = await _context.Juegos
-            .FirstOrDefaultAsync(j => j.CodigoInscrip.EndsWith(codigoComparacion));
+            .FirstOrDefaultAsync(j => j.CodigoInscrip == codigoComparacion);
 
         if (juego == null)
         {
@@ -248,33 +356,54 @@ namespace ppt.Services
             return;
         }
 
-        if (ganador == juego.Jugador1)
+        try
         {
-            juego.PuntajeJ1 = (juego.PuntajeJ1 ?? 0) + 1;
+            if (ganador == juego.Jugador1)
+            {
+                juego.PuntajeJ1 = (juego.PuntajeJ1 ?? 0) + 1;
+            }
+            else if (ganador == juego.Jugador2)
+            {
+                juego.PuntajeJ2 = (juego.PuntajeJ2 ?? 0) + 1;
+            }
+
+            _context.Juegos.Update(juego);
+            await _context.SaveChangesAsync();
         }
-        else if (ganador == juego.Jugador2)
+        catch (Exception ex)
         {
-            juego.PuntajeJ2 = (juego.PuntajeJ2 ?? 0) + 1;
+            Console.WriteLine($"Error al actualizar el puntaje del juego: {ex.Message}");
+            return;
         }
 
-        _context.Juegos.Update(juego);
-        await _context.SaveChangesAsync();
+        // Paso 1: Eliminar la partida con sufijo ".old""
+        var partidaConPrefijo = await _context.Partidas
+            .FirstOrDefaultAsync(p => p.CodigoJuego ==  codigoComparacion+".old");
+        if (partidaConPrefijo != null)
+        {
+            _context.Partidas.Remove(partidaConPrefijo);
+            await _context.SaveChangesAsync();
+        }
 
-        // Elimina la partida
-        _context.Partidas.Remove(partida);
-        await _context.SaveChangesAsync();
+        // Paso 2: Buscar el registro sin el prefijo
+        var recuerdo = await _context.Partidas
+            .FirstOrDefaultAsync(p => p.CodigoJuego == codigoComparacion);
 
-    
+        if (recuerdo != null)
+        {
+            recuerdo.CodigoJuego = recuerdo.CodigoJuego+".old";
+            _context.Partidas.Update(recuerdo);
+            await _context.SaveChangesAsync();
+        }
 
-        // Lógica para crear y retornar un objeto de tipo `Movimientos`
-	  await Task.CompletedTask; // Finaliza el método sin devolver un valor
-
-     }
+        await Task.CompletedTask;
+    }
     else
     {
         Console.WriteLine("No se encontraron ambas tiradas para determinar el ganador.");
     }
-	}
+}
+
 
 
 
@@ -289,9 +418,19 @@ namespace ppt.Services
     return servidor;
 	}
 
-
+     private string TraducirN2PPT (int N)
+	{
+	if (N==1)
+		return  "piedra";
+	if (N==2)
+		return "papel";
+	if (N==3)
+		return "tijeras";
+	return "cargando ...";
+	}
       //
 }
 
+    
 
 }
