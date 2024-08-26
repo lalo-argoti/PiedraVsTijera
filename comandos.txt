@@ -1,7 +1,7 @@
 1. Dockers (puede requerir permisos sudo)
-  Listar docker activos
+1.1 Listar docker activos
   docker ps
-  Listar todos los dockers
+1.2 Listar todos los dockers
   docker ps -a
 
 2. Construir, correr y accediendo a los docker
