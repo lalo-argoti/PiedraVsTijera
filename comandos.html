@@ -9,7 +9,6 @@ Construir, correr y accediendo a los docker
   docker build -t ppt-magnum-backend .
   docker run -d -p 8000:8080 --name ppt-magnum-backend-container ppt-magnum-backend
 
-  
 3. Frontend (Angular (typescript))
   docker build -t angular-docker .
   docker run -p 4201:4200 angular-docker
@@ -17,5 +16,3 @@ Construir, correr y accediendo a los docker
 0. Detener y eliminar un dcoker
   docker stop angular-docker
   docker rm angular-docker
-
-  
