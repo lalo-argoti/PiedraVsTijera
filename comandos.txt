@@ -1,18 +1,24 @@
-Construir, correr y accediendo a los docker
+1. Dockers (puede requerir permisos sudo)
+  Listar docker activos
+  docker ps
+  Listar todos los dockers
+  docker ps -a
 
-1. Mysql
+2. Construir, correr y accediendo a los docker
+
+2.1 Mysql
   docker build -t my-mysql-image .
   docker run --name ppt-magnum-basededatos -d -p 3306:3306 my-mysql-image
   docker exec -it xxxxxxxxx  /bin/sh
 
-2. Backend (c#)
+2.2 Backend (c#)
   docker build -t ppt-magnum-backend .
   docker run -d -p 8000:8080 --name ppt-magnum-backend-container ppt-magnum-backend
 
-3. Frontend (Angular (typescript))
+2.3 Frontend (Angular (typescript))
   docker build -t angular-docker .
   docker run -p 4201:4200 angular-docker
 
-0. Detener y eliminar un dcoker
-  docker stop angular-docker
-  docker rm angular-docker
+2.0 Detener y eliminar un dcoker
+  docker stop xxxxxxxxx
+  docker rm xxxxxxxxx
