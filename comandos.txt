@@ -19,8 +19,8 @@
   -Crea una base de datos para usuario sa segun el archivo adjunto "copia"
 
 
-  docker build -t my-mysql-image .
-  docker run --name ppt-magnum-basededatos -d -p 3306:3306 my-mysql-image
+  docker build -t db .
+  docker run --name ppt-magnum-basededatos -d -p 3306:3306 db
   docker exec -it xxxxxxxxx  /bin/sh
 
 
