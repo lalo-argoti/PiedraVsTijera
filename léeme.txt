@@ -1,0 +1,38 @@
+1. Dockers (puede requerir permisos sudo)
+1.1 Listar docker activos
+  docker ps
+1.2 Listar todos los dockers
+  docker ps -a
+
+2. Construir, correr y accediendo a los docker
+
+2.1 Mysql
+
+  VARIABLES: 
+  -my_secure_root_password ->autodescriptiva 
+  -db -> nombre del docker
+
+  COMANDOS:
+  -Cnstruir: docker build -t db .
+  -Correr: docker run -d   --name db   -e MYSQL_ROOT_PASSWORD=my_secure_root_password   -e MYSQL_DATABASE=my_database   -e MYSQL_USER=my_user   -e MYSQL_PASSWORD=my_secure_user_password   -p 3306:3306   mysql:8.0
+  -acceder al entorno: docker exec -it db sh
+  -Crea una base de datos para usuario sa segun el archivo adjunto "copia"
+
+2.2 Backend (c#)
+- #Para compilar el contenedor
+- docker build -t pptmagnum-backend .
+- # Para accederlo 
+- docker run -d -p 8000:8080 --name ppt-magnum-backend-container pptmagnum-backend
+
+- # Para acceder a la informaci´on
+- curl http://51.222.141.101:8000/
+
+#Compila el frontend
+
+2.3 Frontend (Angular (typescript))
+  docker build -t angular-docker .
+  docker run -p 4201:4200 angular-docker
+
+2.0 Detener y eliminar un dcoker
+  docker stop xxxxxxxxx
+  docker rm xxxxxxxxx
