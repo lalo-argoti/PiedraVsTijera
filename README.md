@@ -1,4 +1,5 @@
-# [PiedraVsTijera](http://51.222.141.101:4201/)
+# [PiedraVsTijera](http://51.222.159.144:4200/) 
+
 ![Diagrama](UML.svg)
 
 Bibliografía:
