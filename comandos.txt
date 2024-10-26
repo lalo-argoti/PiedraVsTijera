@@ -7,9 +7,22 @@
 2. Construir, correr y accediendo a los docker
 
 2.1 Mysql
+
+  VARIABLES: 
+  -my_secure_root_password ->autodescriptiva 
+  -db -> nombre del docker
+
+  COMANDOS:
+  -Cnstruir: docker build -t db .
+  -Correr: docker run -d   --name db   -e MYSQL_ROOT_PASSWORD=my_secure_root_password   -e MYSQL_DATABASE=my_database   -e MYSQL_USER=my_user   -e MYSQL_PASSWORD=my_secure_user_password   -p 3306:3306   mysql:8.0
+  -acceder al entorno: docker exec -it db sh
+  -Crea una base de datos para usuario sa segun el archivo adjunto "copia"
+
+
   docker build -t my-mysql-image .
   docker run --name ppt-magnum-basededatos -d -p 3306:3306 my-mysql-image
   docker exec -it xxxxxxxxx  /bin/sh
+
 
 2.2 Backend (c#)
   docker build -t ppt-magnum-backend .
