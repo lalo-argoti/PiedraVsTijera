@@ -20,7 +20,7 @@ COMANDOS:
 2.2 Backend (c#)
   - #Para compilar el contenedor
   - docker build -t pptmagnum-backend .
-  - # Para accederlo 
+  - # Para ejecutarlo 
   - docker run -d -p 8000:8080 --name ppt-magnum-backend-container pptmagnum-backend
 
   - # Para acceder a la informaci´on
