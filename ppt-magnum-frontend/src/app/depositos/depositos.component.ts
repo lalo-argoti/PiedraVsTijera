@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
+
 
 @Component({
   selector: 'app-depositos',
@@ -58,7 +60,7 @@ export class DepositosComponent implements OnInit {
   // Control de edición
   editandoDetalleId: number | null = null;
 
-  private apiUrl = 'http://172.20.10.3:8000/api/depositos';
+  private apiUrl = '${environment.apiUrl}/api/depositos';
 
   constructor(private http: HttpClient) {}
 
@@ -67,7 +69,7 @@ export class DepositosComponent implements OnInit {
   }
 
   cargarDatosIniciales() {
-    this.http.get<any[]>('http://172.20.10.3:8000/api/fondos').subscribe({
+    this.http.get<any[]>('${environment.apiUrl}/api/fondos').subscribe({
       next: (data) => this.fondos = data,
       error: (err) => console.error('Error al cargar fondos', err)
     });

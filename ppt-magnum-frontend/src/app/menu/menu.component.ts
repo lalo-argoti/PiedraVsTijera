@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router'; // si usas routerLink en plantilla
 import { CommonModule } from '@angular/common'; // ✅ necesario para *ngFor y *ngIf
+import { environment } from '../../environments/environment';
+
 
 @Component({
   selector: 'app-menu',

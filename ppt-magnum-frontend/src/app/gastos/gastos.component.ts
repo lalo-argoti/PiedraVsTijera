@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
+
 
 @Component({
   selector: 'app-gastos',
@@ -30,7 +32,7 @@ export class GastosComponent implements OnInit {
   total = 0;
   editandoDetalleId: number | null = null;
 
-  private apiUrl = 'http://172.20.10.3:8000/api/gastoregistro';
+  private apiUrl = '${environment.apiUrl}/api/gastoregistro';
   propietarioId = 3; // Temporal o extraído del login
 
   constructor(private http: HttpClient) {}
@@ -40,12 +42,12 @@ export class GastosComponent implements OnInit {
   }
 
   cargarDatosIniciales() {
-    this.http.get<any[]>(`http://172.20.10.3:8000/api/GastosTipo/${this.propietarioId}`).subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/api/GastosTipo/${this.propietarioId}`).subscribe({
       next: (data) => this.tiposGasto = data,
       error: (err) => console.error('Error al cargar tipos de gasto', err)
     });
 
-    this.http.get<any[]>(`http://172.20.10.3:8000/api/Fondos/${this.propietarioId}`).subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/api/Fondos/${this.propietarioId}`).subscribe({
       next: (data) => this.fondos = data,
       error: (err) => console.error('Error al cargar fondos', err)
     });

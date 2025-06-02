@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
+
 
 @Component({
   selector: 'app-presupuesto',
@@ -57,7 +59,7 @@ export class PresupuestoComponent implements OnInit {
   editandoId: number | null = null;
 
   // URL de la API (debes reemplazarla con tu endpoint real)
-  private apiUrl = 'http://173.20.10.3:8000/api/gastos';
+  private apiUrl = '${environment.apiUrl}/api/gastos';
 
   constructor(private http: HttpClient) {}
 
@@ -68,12 +70,12 @@ export class PresupuestoComponent implements OnInit {
 
   // Carga los tipos de gasto y fondos disponibles
   cargarDatosIniciales() {
-    this.http.get<any[]>('http://173.20.10.3:8000/api/tipos-gasto').subscribe({
+    this.http.get<any[]>('${environment.apiUrl}/api/tipos-gasto').subscribe({
       next: (data) => this.tiposGasto = data,
       error: (err) => console.error('Error al cargar tipos de gasto', err)
     });
 
-    this.http.get<any[]>('http://173.20.10.3:8000/api/fondos').subscribe({
+    this.http.get<any[]>('${environment.apiUrl}/api/fondos').subscribe({
       next: (data) => this.fondos = data,
       error: (err) => console.error('Error al cargar fondos', err)
     });

@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgChartsModule } from 'ng2-charts';
 import { ChartConfiguration, ChartType } from 'chart.js';
+import { environment } from '../../environments/environment';
+
 
 @Component({
   selector: 'app-grafico',
@@ -107,7 +109,7 @@ export class GraficoComponent implements OnInit {
   }
 
   cargarTiposGasto() {
-    this.http.get<any[]>('http://172.20.10.3:8000/api/tipos-gasto')
+    this.http.get<any[]>('${environment.apiUrl}/api/tipos-gasto')
       .subscribe({
         next: (data) => {
           this.tiposGasto = data;
@@ -134,7 +136,7 @@ export class GraficoComponent implements OnInit {
       fecha_fin: this.fechaFin
     };
 
-    this.http.get<any>('http://172.20.10.3:8000/api/presupuesto-ejecucion', { params })
+    this.http.get<any>('${environment.apiUrl}/api/presupuesto-ejecucion', { params })
       .subscribe({
         next: (data) => {
           this.procesarDatos(data);

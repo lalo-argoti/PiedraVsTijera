@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
+
 
 interface FondoMonetario {
   id: number;
@@ -16,6 +18,7 @@ interface FondoMonetario {
   selector: 'app-fondo-monetario',
   standalone: true,
   imports: [CommonModule, FormsModule],
+  
   templateUrl: './fondo-monetario.component.html',
   styleUrls: ['./fondo-monetario.component.css']
 })
@@ -24,10 +27,11 @@ export class FondoMonetarioComponent implements OnInit {
   nombre: string = '';
   capitalCOP: number = 0;
   capitalUSD: number = 0;
+
   tipo: 'Caja' | 'Bancaria' = 'Caja';
   codigoGenerado: string = '';
   editandoId: number | null = null;
-  private apiUrl = 'http://172.20.10.3:8000/api/FondoMonetario';
+  private apiUrl = '${environment.apiUrl}/api/FondoMonetario';
 
   constructor(private http: HttpClient) {}
 

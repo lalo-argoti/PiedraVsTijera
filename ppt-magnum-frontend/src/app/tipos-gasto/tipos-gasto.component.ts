@@ -3,6 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
+
 
 @Component({
   selector: 'app-tipos-gasto',
@@ -27,7 +29,7 @@ export class TiposGastoComponent implements OnInit {
   presupuestousd: number = 0;
   editandoCodigo: string | null = null;
 
-  private apiUrl = 'http://172.20.10.3:8000/api/GastoTipo';
+  private apiUrl = '${environment.apiUrl}/api/GastoTipo';
 
   constructor(private http: HttpClient, private router: Router) {}
 

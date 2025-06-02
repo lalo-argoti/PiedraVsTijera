@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { environment } from '../../environments/environment';
+
 
 @Component({
   selector: 'app-movimientos',
@@ -49,7 +51,7 @@ export class MovimientosComponent implements OnInit {
       fecha_fin: this.fechaFin
     };
 
-    this.http.get<any[]>('http://172.20.10.3:8000/api/movimientos', { params })
+    this.http.get<any[]>('${environment.apiUrl}/api/movimientos', { params })
       .subscribe({
         next: (data) => {
           this.movimientos = data;

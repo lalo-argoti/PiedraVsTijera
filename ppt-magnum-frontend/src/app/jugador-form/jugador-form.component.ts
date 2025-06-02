@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient,HttpClientModule  } from '@angular/common/http';
 import { CommonModule } from '@angular/common'; 
+import { environment } from '../../environments/environment';
+
 
 @Component({
   selector: 'app-jugador-form',
@@ -28,7 +30,7 @@ export class JugadorFormComponent {
      console.log('Login data enviada:', loginData);
 
       
-  this.http.post<any>('http://172.20.10.3:8000/api/user/autenticar', loginData).subscribe(
+  this.http.post<any>('${environment.apiUrl}/api/user/autenticar', loginData).subscribe(
   response => {
     console.log('Respuesta del backend:', response);
     localStorage.setItem('jwt', response.token); // ✅ Guarda el token
