@@ -24,11 +24,7 @@ namespace pdt.Controllers
                 {
                     Fecha = model.Fecha,
                     Observaciones = model.Observaciones,
-                    
-                    // Mapeamos 'Criterio' del DTO tanto en NombreComercio como TipoDocumento
-                    NombreComercio = model.Criterio,
-                    TipoDocumento = model.Criterio,
-
+                    Criterio = model.Criterio,
                     Propietario = model.Propietario,
                     FondoId = model.FondoId
                 };
@@ -38,18 +34,15 @@ namespace pdt.Controllers
 
                 foreach (var detalle in model.Detalles)
                 {
-                    var gastoDetalle = new GastoDetalle
+                    _context.GastoDetalles.Add(new GastoDetalle
                     {
                         GastoRegistroId = registro.Id,
                         GastoTipoId = detalle.GastoTipoId,
                         Monto = detalle.Monto
-                    };
-
-                    _context.GastoDetalles.Add(gastoDetalle);
+                    });
                 }
 
                 _context.SaveChanges();
-
                 return CreatedAtAction(nameof(Create), new { id = registro.Id }, registro);
             }
             catch (Exception ex)
