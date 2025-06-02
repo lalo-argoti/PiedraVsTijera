@@ -1,0 +1,95 @@
+<div class="fondos-container">
+  <h3>Fondos Monetarios</h3>
+
+  <ul *ngIf="fondos.length > 0; else sinFondos">
+    <li *ngFor="let fondo of fondos">
+      <div class="item-info">
+        <strong>{{ fondo.codigo }}</strong> - {{ fondo.nombre }}<br>
+        <small>
+          Tipo: {{ fondo.tipo }} | 
+          COP: {{ fondo.capitalCOP | currency:'COP':'symbol':'1.2-2' }} | 
+          USD: {{ fondo.capitalUSD | currency:'USD':'symbol':'1.2-2' }}
+        </small>
+      </div>
+      <div class="item-actions">
+        <button class="editar" (click)="editar(fondo)">Editar</button>
+        <button class="eliminar" (click)="eliminar(fondo.id)">Eliminar</button>
+      </div>
+    </li>
+  </ul>
+
+  <ng-template #sinFondos>
+    <p class="text-center">No hay fondos monetarios registrados.</p>
+  </ng-template>
+
+  <hr />
+
+  <form (ngSubmit)="onSubmit()" #form="ngForm">
+    <label>Código: {{ codigoGenerado }}</label>
+
+    <label for="nombre">Nombre del Fondo:</label>
+    <input
+      id="nombre"
+      name="nombre"
+      type="text"
+      [(ngModel)]="nombre"
+      required
+      placeholder="Ingrese nombre del fondo"
+      #nombreInput="ngModel"
+    />
+    <div *ngIf="nombreInput.invalid && nombreInput.touched" class="error">
+      El nombre es requerido.
+    </div>
+
+    <label for="tipo">Tipo:</label>
+    <select id="tipo" name="tipo" [(ngModel)]="tipo" required>
+      <option value="Caja">Caja</option>
+      <option value="Bancaria">Bancaria</option>
+    </select>
+
+    <label for="capitalCOP">Capital COP:</label>
+    <input
+      id="capitalCOP"
+      name="capitalCOP"
+      type="number"
+      [(ngModel)]="capitalCOP"
+      required
+      min="0"
+      step="0.01"
+      placeholder="Ej: 1000000"
+      #copInput="ngModel"
+    />
+    <div *ngIf="copInput.invalid && copInput.touched" class="error">
+      El capital en COP es requerido y debe ser ≥ 0.
+    </div>
+
+    <label for="capitalUSD">Capital USD:</label>
+    <input
+      id="capitalUSD"
+      name="capitalUSD"
+      type="number"
+      [(ngModel)]="capitalUSD"
+      required
+      min="0"
+      step="0.01"
+      placeholder="Ej: 250"
+      #usdInput="ngModel"
+    />
+    <div *ngIf="usdInput.invalid && usdInput.touched" class="error">
+      El capital en USD es requerido y debe ser ≥ 0.
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" [disabled]="form.invalid">
+        {{ editandoId !== null ? 'Actualizar' : 'Guardar' }}
+      </button>
+      <button
+        type="button"
+        *ngIf="editandoId !== null"
+        (click)="cancelarEdicion()"
+      >
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>

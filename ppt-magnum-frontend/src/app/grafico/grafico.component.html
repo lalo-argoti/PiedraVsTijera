@@ -1,0 +1,52 @@
+<div class="form-container">
+  <h2 class="form-title">Comparativo Presupuesto vs. Ejecución</h2>
+
+  <!-- Filtros -->
+  <div class="form-group">
+    <div class="filtros-container">
+      <div class="form-group">
+        <label class="form-label">Fecha Inicio</label>
+        <input type="date" class="form-input" [(ngModel)]="fechaInicio">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Fecha Fin</label>
+        <input type="date" class="form-input" [(ngModel)]="fechaFin">
+      </div>
+
+      <button class="btn btn-primary" (click)="consultarDatos()" [disabled]="cargando">
+        {{ cargando ? 'Cargando...' : 'Generar Gráfico' }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <!-- Gráfico -->
+  <div class="chart-container">
+    <canvas baseChart
+      [data]="barChartData"
+      [options]="barChartOptions"
+      [type]="barChartType"
+      [legend]="barChartLegend">
+    </canvas>
+  </div>
+
+  <!-- Leyenda -->
+  <div class="leyenda">
+    <div class="leyenda-item">
+      <span class="leyenda-color" style="background-color: #3b82f6;"></span>
+      <span>Presupuestado</span>
+    </div>
+    <div class="leyenda-item">
+      <span class="leyenda-color" style="background-color: #10b981;"></span>
+      <span>Ejecutado</span>
+    </div>
+    <div class="leyenda-item">
+      <span class="leyenda-color" style="background-color: #f59e0b;"></span>
+      <span>Diferencia (Presupuesto - Ejecución)</span>
+    </div>
+  </div>
+</div>

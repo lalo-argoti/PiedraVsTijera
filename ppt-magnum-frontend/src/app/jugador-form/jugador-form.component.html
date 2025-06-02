@@ -1,13 +1,38 @@
-<div class="codigo-form-container">
-  <h2>Bienvenido al juego</h2>
-  <!-- Contenido del juego aquí -->
-  <form (ngSubmit)="onSubmit()">
-   <div class="form-group">
-    <label for="playerName">Tu nombre:</label>
-    <input type="text" id="playerName" [(ngModel)]="playerName" name="playerName" class="texto-em" required />
-   </div>
-    <div class="button-group">
-    <button type="submit" class="btn btn-primary">Enviar</button>
-    </div>
-  </form>
+    <div class="codigo-form-container">
+    <h2>Bienvenido al juego</h2>
+    <!-- Contenido del juego aquí -->
+<div *ngIf="errorMessage" class="alert alert-danger">
+  {{ errorMessage }}
 </div>
+    <form (ngSubmit)="onSubmit()">
+    <div class="form-group">
+        <label for="username">Tu nombre:</label>
+        <input
+        type="text"
+        id="username"
+        [(ngModel)]="username"
+        name="username"
+        class="texto-em"
+        required
+        />
+    </div>
+    
+    <div class="form-group">
+        <label for="password">Tu contraseña:</label>
+        <input
+        type="password"
+        id="password"
+        [(ngModel)]="password"
+        name="password"
+        class="texto-em"
+        required
+        />
+    </div>
+
+        <div class="button-group">
+        <button type="submit" class="btn btn-primary">Enviar</button>
+        </div>
+    </form>
+
+
+    </div>

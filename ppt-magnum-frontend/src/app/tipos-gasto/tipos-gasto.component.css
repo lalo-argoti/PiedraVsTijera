@@ -1,0 +1,160 @@
+.tipos-gasto-container {
+  max-width: 450px;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tipos-gasto-container h3 {
+  margin-bottom: 1.5rem;
+  color: #1e3a8a;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.tipos-gasto-container ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin-bottom: 1.5rem;
+}
+
+.tipos-gasto-container ul li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  margin-bottom: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.tipos-gasto-container ul li .item-info {
+  flex-grow: 1;
+}
+
+.tipos-gasto-container ul li .item-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.tipos-gasto-container ul li button {
+  padding: 0.4rem 0.75rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tipos-gasto-container ul li button.eliminar {
+  background-color: #ef4444;
+  color: white;
+}
+
+.tipos-gasto-container ul li button.eliminar:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+}
+
+.tipos-gasto-container ul li button.editar {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.tipos-gasto-container ul li button.editar:hover {
+  background-color: #d97706;
+  transform: translateY(-1px);
+}
+
+.tipos-gasto-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tipos-gasto-container label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+.tipos-gasto-container input[type="text"],
+.tipos-gasto-container input[type="number"] {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.tipos-gasto-container input[type="text"]:focus,
+.tipos-gasto-container input[type="number"]:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.form-buttons {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.form-buttons button {
+  flex: 1;
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.form-buttons button.save {
+  background-color: #10b981;
+  color: white;
+}
+
+.form-buttons button.save:disabled {
+  background-color: #6ee7b7;
+  cursor: not-allowed;
+}
+
+.form-buttons button.save:not(:disabled):hover {
+  background-color: #059669;
+  transform: translateY(-1px);
+}
+
+.form-buttons button.cancel {
+  background-color: #6b7280;
+  color: white;
+}
+
+.form-buttons button.cancel:hover {
+  background-color: #4b5563;
+  transform: translateY(-1px);
+}
+
+.error-msg {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background-color: #e5e7eb;
+  margin: 1.5rem 0;
+}

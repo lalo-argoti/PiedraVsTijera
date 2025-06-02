@@ -1,0 +1,94 @@
+<div class="tipos-gasto-container">
+  <h3>Tipos de Gastos</h3>
+
+  <ul *ngIf="tiposGasto.length > 0; else noTipos">
+    <li *ngFor="let tipo of tiposGasto">
+      <div class="item-info">
+        <strong>{{ tipo.codigo }}</strong> - {{ tipo.nombre }}<br>
+        <small>
+          COP: {{ tipo.presupuestocol | currency:'COP' }} |
+          USD: {{ tipo.presupuestousd | currency:'USD' }}
+        </small>
+      </div>
+      <div class="item-actions">
+        <button class="editar" (click)="editarTipo(tipo)">Editar</button>
+        <button class="eliminar" (click)="eliminarTipo(tipo.id)">Eliminar</button>
+      </div>
+    </li>
+  </ul>
+
+  <ng-template #noTipos>
+    <p class="text-center">No hay tipos de gasto disponibles.</p>
+  </ng-template>
+
+  <hr />
+
+  <form (ngSubmit)="onSubmit()" #form="ngForm">
+    <label>Código (auto): {{ codigoGenerado }}</label>
+
+    <label for="nombre">Nombre:</label>
+    <input
+      id="nombre"
+      name="nombre"
+      type="text"
+      [(ngModel)]="nombre"
+      required
+      placeholder="Ingrese nombre del tipo de gasto"
+      #nombreInput="ngModel"
+    />
+    <div *ngIf="nombreInput.invalid && nombreInput.touched" class="error-msg">
+      El nombre es requerido.
+    </div>
+
+    <label for="presupuestocol">Presupuesto COP:</label>
+    <input
+      id="presupuestocol"
+      name="presupuestocol"
+      type="number"
+      [(ngModel)]="presupuestocol"
+      required
+      min="0"
+      step="0.01"
+      placeholder="Ej: 1000000"
+      #copInput="ngModel"
+    />
+    <div *ngIf="copInput.invalid && copInput.touched" class="error-msg">
+      El presupuesto en COP es requerido y debe ser mayor o igual a 0.
+    </div>
+
+    <label for="presupuestousd">Presupuesto USD:</label>
+    <input
+      id="presupuestousd"
+      name="presupuestousd"
+      type="number"
+      [(ngModel)]="presupuestousd"
+      required
+      min="0"
+      step="0.01"
+      placeholder="Ej: 250"
+      #usdInput="ngModel"
+    />
+    <div *ngIf="usdInput.invalid && usdInput.touched" class="error-msg">
+      El presupuesto en USD es requerido y debe ser mayor o igual a 0.
+    </div>
+
+    <div class="form-buttons">
+      <button
+        type="submit"
+        class="save"
+        [disabled]="form.invalid"
+      >
+        {{ editandoCodigo ? 'Actualizar' : 'Guardar' }}
+      </button>
+
+      <button
+        type="button"
+        class="cancel"
+        *ngIf="editandoCodigo"
+        (click)="cancelarEdicion()"
+      >
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,98 @@
+<div class="form-container">
+  <h2 class="form-title">Gastos Mensuales</h2>
+
+  <!-- Selector de mes y año -->
+  <div class="form-group">
+    <label class="form-label">Seleccionar Mes</label>
+    <div class="btn-group">
+      <select class="form-select" [(ngModel)]="mesSeleccionado" name="mes" (change)="cambiarMes()">
+        <option *ngFor="let mes of meses" [value]="mes.id">{{ mes.nombre }}</option>
+      </select>
+      <select class="form-select" [(ngModel)]="anioSeleccionado" name="anio" (change)="cambiarMes()">
+        <option *ngFor="let anio of anios" [value]="anio">{{ anio }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Resumen del mes -->
+  <div class="form-group resumen-mes">
+    <h3>Resumen del Mes</h3>
+    <p><strong>Total Gastado COP:</strong> {{ totalGastadoCOP | currency:'COP':'symbol':'1.0-0' }}</p>
+    <p><strong>Total Gastado USD:</strong> {{ totalGastadoUSD | currency:'USD':'symbol':'1.2-2' }}</p>
+  </div>
+
+  <!-- Formulario de gastos -->
+  <form (ngSubmit)="onSubmit()" #gastoForm="ngForm">
+    <div class="form-group">
+      <label class="form-label">Fecha</label>
+      <input type="date" class="form-input" name="fecha" [(ngModel)]="nuevoGasto.fecha" required>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Tipo de Gasto</label>
+      <select class="form-select" name="tipoGastoId" [(ngModel)]="nuevoGasto.tipoGastoId" required>
+        <option value="">Seleccionar tipo</option>
+        <option *ngFor="let tipo of tiposGasto" [value]="tipo.id">{{ tipo.nombre }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Fondo Monetario</label>
+      <select class="form-select" name="fondoId" [(ngModel)]="nuevoGasto.fondoId" required>
+        <option value="">Seleccionar fondo</option>
+        <option *ngFor="let fondo of fondos" [value]="fondo.id">{{ fondo.nombre }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Monto COP</label>
+      <input type="number" class="form-input" name="montoCOP" [(ngModel)]="nuevoGasto.montoCOP" min="0" step="0.01">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Monto USD</label>
+      <input type="number" class="form-input" name="montoUSD" [(ngModel)]="nuevoGasto.montoUSD" min="0" step="0.01">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Descripción</label>
+      <textarea class="form-textarea" name="descripcion" [(ngModel)]="nuevoGasto.descripcion"></textarea>
+    </div>
+
+    <div class="btn-group">
+      <button type="submit" class="btn btn-primary" [disabled]="gastoForm.invalid">
+        {{ editandoId ? 'Actualizar' : 'Guardar' }}
+      </button>
+      <button *ngIf="editandoId" type="button" class="btn btn-cancel" (click)="cancelarEdicion()">Cancelar</button>
+    </div>
+  </form>
+
+  <div class="form-divider"></div>
+
+  <!-- Lista de gastos -->
+  <h3>Registros del Mes</h3>
+  <ul class="items-list" *ngIf="gastos.length > 0; else noGastos">
+    <li class="list-item" *ngFor="let gasto of gastos">
+      <div class="item-info">
+        <strong>{{ gasto.fecha | date:'shortDate' }}</strong><br>
+        <small>
+          <strong>Tipo:</strong> {{ getNombreTipoGasto(gasto.tipoGastoId) }} | 
+          <strong>Fondo:</strong> {{ getNombreFondo(gasto.fondoId) }}<br>
+          <strong>COP:</strong> {{ gasto.montoCOP | currency:'COP':'symbol':'1.0-0' }} | 
+          <strong>USD:</strong> {{ gasto.montoUSD | currency:'USD':'symbol':'1.2-2' }}<br>
+          <strong>Descripción:</strong> {{ gasto.descripcion || 'N/A' }}
+        </small>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-edit" (click)="editarGasto(gasto)">Editar</button>
+        <button class="btn btn-delete" (click)="eliminarGasto(gasto.id)">Eliminar</button>
+      </div>
+    </li>
+  </ul>
+
+  <ng-template #noGastos>
+    <div class="no-gastos">
+      <p>No hay gastos registrados para este mes.</p>
+    </div>
+  </ng-template>
+</div>

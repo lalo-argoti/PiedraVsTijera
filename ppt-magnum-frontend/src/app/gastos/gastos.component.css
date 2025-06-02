@@ -1,0 +1,198 @@
+/* Contenedor principal */
+.form-container {
+  max-width: 700px;
+  margin: 1.5rem auto;
+  padding: 1.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #f0f8ff;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Título */
+.form-title {
+  margin-bottom: 1.75rem;
+  color: #1e3a8a;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+/* Divisor */
+.form-divider {
+  border: 0;
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 1.75rem 0;
+}
+
+/* Grupos de formulario */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.95rem;
+}
+
+/* Campos de formulario */
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background-color: #f9fafb;
+  transition: all 0.3s ease;
+}
+
+.form-textarea {
+  min-height: 80px;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  background-color: #ffffff;
+}
+
+/* Lista de items */
+.items-list {
+  list-style-type: none;
+  padding-left: 0;
+  margin-bottom: 1.75rem;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  margin-bottom: 0.875rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  font-size: 0.95rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.list-item:hover {
+  transform: translateY(-2px);
+}
+
+.item-info {
+  flex-grow: 1;
+}
+
+.item-actions {
+  display: flex;
+  gap: 0.625rem;
+}
+
+/* Botones */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background-color: #10b981;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #059669;
+  transform: translateY(-1px);
+}
+
+.btn-secondary:disabled {
+  background-color: #6ee7b7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-edit {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.btn-edit:hover {
+  background-color: #d97706;
+}
+
+.btn-delete {
+  background-color: #ef4444;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #dc2626;
+}
+
+.btn-cancel {
+  background-color: #6b7280;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background-color: #4b5563;
+}
+
+/* Grupo de botones */
+.btn-group {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.btn-group .btn {
+  flex: 1;
+}
+
+/* Texto centrado */
+.text-center {
+  text-align: center;
+}
+
+/* Totales */
+.totales {
+  font-weight: 600;
+  color: #1e3a8a;
+  margin: 0.5rem 0;
+}

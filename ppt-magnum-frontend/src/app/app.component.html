@@ -176,21 +176,30 @@
     }
   }
 </style>
-
 <main class="main">
   <div class="content">
-    <div class="left-side">
 
+      <div class="left-side">
+      <app-menu></app-menu> 
+         </div>
 
-<router-outlet />
+ </div>
 
-    </div>
-    <div class="divider" role="separator" aria-label="Divider"></div>
- <h1>{{ title }}</h1>
+</main>
+
+        
+        
+<main class="main">
+  <div class="content">
+   <div class="left-side">
+
+       <router-outlet />
+
+   </div>
 
   </div>
 </main>
-
+{{ title }}
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 <!-- * * * * * * * * * * * The content above * * * * * * * * * * * * -->
 <!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * * -->

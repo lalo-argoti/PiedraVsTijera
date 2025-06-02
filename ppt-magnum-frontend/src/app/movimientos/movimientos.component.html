@@ -1,0 +1,89 @@
+<div class="form-container">
+  <h2 class="form-title">Consulta de Movimientos</h2>
+
+  <!-- Filtros -->
+  <div class="form-group">
+    <div class="filtros-container">
+      <div class="form-group">
+        <label class="form-label">Fecha Inicio</label>
+        <input type="date" class="form-input" [(ngModel)]="fechaInicio">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Fecha Fin</label>
+        <input type="date" class="form-input" [(ngModel)]="fechaFin">
+      </div>
+
+      <button class="btn btn-primary" (click)="consultarMovimientos()" [disabled]="cargando">
+        {{ cargando ? 'Cargando...' : 'Consultar' }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <!-- Resumen -->
+  <div class="form-group resumen-container">
+    <h3>Resumen</h3>
+    <div class="resumen-grid">
+      <div class="resumen-item">
+        <h4>Depósitos</h4>
+        <p>Total COP: <span class="text-success">{{ totalDepositosCOP | currency:'COP':'symbol':'1.0-0' }}</span></p>
+        <p>Total USD: <span class="text-success">{{ totalDepositosUSD | currency:'USD':'symbol':'1.2-2' }}</span></p>
+      </div>
+      <div class="resumen-item">
+        <h4>Gastos</h4>
+        <p>Total COP: <span class="text-danger">{{ totalGastosCOP | currency:'COP':'symbol':'1.0-0' }}</span></p>
+        <p>Total USD: <span class="text-danger">{{ totalGastosUSD | currency:'USD':'symbol':'1.2-2' }}</span></p>
+      </div>
+      <div class="resumen-item">
+        <h4>Balance</h4>
+        <p>Total COP: <span [class]="(totalDepositosCOP - totalGastosCOP) >= 0 ? 'text-success' : 'text-danger'">
+          {{ (totalDepositosCOP - totalGastosCOP) | currency:'COP':'symbol':'1.0-0' }}
+        </span></p>
+        <p>Total USD: <span [class]="(totalDepositosUSD - totalGastosUSD) >= 0 ? 'text-success' : 'text-danger'">
+          {{ (totalDepositosUSD - totalGastosUSD) | currency:'USD':'symbol':'1.2-2' }}
+        </span></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lista de movimientos -->
+  <div class="form-group">
+    <h3>Detalle de Movimientos</h3>
+    <p *ngIf="movimientos.length === 0 && !cargando">No hay movimientos en el rango seleccionado</p>
+    
+    <ul class="items-list" *ngIf="movimientos.length > 0">
+      <li class="list-item" *ngFor="let mov of movimientos" [class.movimiento-deposito]="mov.tipo === 'deposito'" [class.movimiento-gasto]="mov.tipo === 'gasto'">
+        <div class="item-info">
+          <div class="movimiento-header">
+            <span class="movimiento-icono" [class]="getColorMovimiento(mov.tipo)">{{ getIconoMovimiento(mov.tipo) }}</span>
+            <strong>{{ mov.fecha | date:'mediumDate' }}</strong>
+            <span class="movimiento-tipo" [class]="getColorMovimiento(mov.tipo)">
+              {{ mov.tipo === 'deposito' ? 'DEPÓSITO' : 'GASTO' }}
+            </span>
+          </div>
+          
+          <div class="movimiento-detalle">
+            <p><strong>Descripción:</strong> {{ mov.descripcion || 'Sin descripción' }}</p>
+            <p *ngIf="mov.referencia"><strong>Referencia:</strong> {{ mov.referencia }}</p>
+            <p *ngIf="mov.tipoGasto"><strong>Tipo:</strong> {{ mov.tipoGasto }}</p>
+            <p *ngIf="mov.fondo"><strong>Fondo:</strong> {{ mov.fondo }}</p>
+            <p *ngIf="mov.metodoPago"><strong>Método:</strong> {{ mov.metodoPago }}</p>
+          </div>
+        </div>
+        
+        <div class="item-montos">
+          <p [class]="getColorMovimiento(mov.tipo)">
+            <strong>COP:</strong> {{ mov.montoCOP | currency:'COP':'symbol':'1.0-0' }}
+          </p>
+          <p [class]="getColorMovimiento(mov.tipo)">
+            <strong>USD:</strong> {{ mov.montoUSD | currency:'USD':'symbol':'1.2-2' }}
+          </p>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

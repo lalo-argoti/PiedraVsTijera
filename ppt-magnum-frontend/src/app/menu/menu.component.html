@@ -1,0 +1,10 @@
+<ul class="menu">
+  <li *ngFor="let item of menuItems" class="menu-item">
+    <span class="menu-title">{{ item.title }}</span>
+    <ul class="submenu">
+      <li *ngFor="let child of item.children">
+        <a [routerLink]="child.route">{{ child.name }}</a>
+      </li>
+    </ul>
+  </li>
+</ul>

@@ -1,16 +1,18 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ApiServiceTsService } from '../api.service.ts.service'; // Ajusta la ruta si es necesario
+import { ApiService } from '../api.service'; // Ajusta la ruta si es necesario
 import { Subscription, interval, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-juego',
   standalone: true,
   templateUrl: './juego.component.html',
   styleUrls: ['./juego.component.css'],
-  imports: [CommonModule]
+  imports: [CommonModule, HttpClientModule]
 })
 export class JuegoComponent implements OnInit, OnDestroy {
   code: string | null = null;
@@ -25,7 +27,7 @@ export class JuegoComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private apiService: ApiServiceTsService
+    private apiService: ApiService
   ) {}
 
   ngOnInit() {
@@ -48,7 +50,7 @@ export class JuegoComponent implements OnInit, OnDestroy {
 
   onSvgClick(movimiento: number) {
     if (this.playerName && this.code) {
-      const url = `http://51.222.141.101:8000/partido?user=${this.playerName}&partida=${this.code}&movimiento=${movimiento}`;
+      const url = `http://172.20.10.3:8000/partido?user=${this.playerName}&partida=${this.code}&movimiento=${movimiento}`;
       this.apiService.getPartidoDetalles(this.playerName, this.code, movimiento).subscribe(data => {
         console.log('Datos del partido:', data);
       });

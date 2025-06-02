@@ -1,0 +1,71 @@
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background: #333;
+  display: flex;
+  gap: 1rem;
+}
+
+.menu-item {
+  position: relative;
+  color: white;
+}
+
+.menu-title {
+  padding: 1rem;
+  display: block;
+  cursor: pointer;
+}
+
+/* Submenu hidden por defecto */
+.submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #444;
+  padding: 0.5rem 0;
+  list-style: none;
+  margin: 0;
+  min-width: 180px;
+  display: none;
+  border-radius: 0 0 5px 5px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+
+/* Mostrar submenu al hacer hover en menu-item */
+.menu-item:hover .submenu {
+  display: block;
+}
+
+.submenu li a {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: white;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.submenu li a:hover {
+  background-color: #666;
+}
+
+/* Responsive: menú vertical en pantallas pequeñas */
+@media (max-width: 768px) {
+  .menu {
+    flex-direction: column;
+  }
+  .menu-item {
+    border-bottom: 1px solid #555;
+  }
+  .submenu {
+    position: static;
+    box-shadow: none;
+    border-radius: 0;
+    display: none;
+  }
+  .menu-item:hover .submenu {
+    display: block;
+  }
+}

@@ -1,23 +1,49 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import {FormsModule} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { HttpClient,HttpClientModule  } from '@angular/common/http';
+import { CommonModule } from '@angular/common'; 
+
 @Component({
   selector: 'app-jugador-form',
   standalone: true,
   templateUrl: './jugador-form.component.html',
   styleUrls: ['./jugador-form.component.css'],
-  imports: [FormsModule]
+  imports: [FormsModule, CommonModule,HttpClientModule]
+    
 })
 export class JugadorFormComponent {
-  playerName: string = '';
+  username: string = '';
+  password: string = '';
+  errorMessage: string = '';  
 
-  constructor(private router: Router) {}
+
+  constructor(private http: HttpClient, private router: Router) {}
 
   onSubmit() {
-    // Aquí se va a enviar el nombre a C#
-    console.log('Nombre del jugador enviado:', this.playerName);
+   const loginData = {
+    username: this.username,
+    password: this.password
+  };
+     console.log('Login data enviada:', loginData);
 
-    // Redirigir a la página de código
-    this.router.navigate(['/codigo'],{ queryParams: { name: this.playerName } });
+      
+  this.http.post<any>('http://172.20.10.3:8000/api/user/autenticar', loginData).subscribe(
+  response => {
+    console.log('Respuesta del backend:', response);
+    localStorage.setItem('jwt', response.token); // ✅ Guarda el token
+    localStorage.setItem('jwt', response.IdUser);
+    localStorage.setItem('jwt', response.Username);
+    this.router.navigate(['/grafico']);
+  },
+  error => {
+    console.error('Error en el login:', error);
+    if (error.status === 401) {
+      this.errorMessage = 'Credenciales inválidas. Por favor verifica usuario y contraseña.';
+    } else {
+      this.errorMessage = 'Error inesperado. Intenta más tarde.';
+    }
   }
+                                                                                        );
+  } 
 }
