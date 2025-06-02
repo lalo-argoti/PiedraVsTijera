@@ -109,7 +109,7 @@ export class GraficoComponent implements OnInit {
   }
 
   cargarTiposGasto() {
-    this.http.get<any[]>('${environment.apiUrl}/api/tipos-gasto')
+    this.http.get<any[]>(`${environment.apiUrl}/api/tipos-gasto`)
       .subscribe({
         next: (data) => {
           this.tiposGasto = data;
@@ -136,7 +136,7 @@ export class GraficoComponent implements OnInit {
       fecha_fin: this.fechaFin
     };
 
-    this.http.get<any>('${environment.apiUrl}/api/presupuesto-ejecucion', { params })
+    this.http.get<any>(`${environment.apiUrl}/api/presupuesto-ejecucion`, { params })
       .subscribe({
         next: (data) => {
           this.procesarDatos(data);

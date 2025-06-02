@@ -32,7 +32,7 @@ export class GastosComponent implements OnInit {
   total = 0;
   editandoDetalleId: number | null = null;
 
-  private apiUrl = '${environment.apiUrl}/api/gastoregistro';
+  private apiUrl = `${environment.apiUrl}/api/gastoregistro`;
   propietarioId = 3; // Temporal o extraído del login
 
   constructor(private http: HttpClient) {}

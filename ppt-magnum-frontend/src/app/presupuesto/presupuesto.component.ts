@@ -59,7 +59,7 @@ export class PresupuestoComponent implements OnInit {
   editandoId: number | null = null;
 
   // URL de la API (debes reemplazarla con tu endpoint real)
-  private apiUrl = '${environment.apiUrl}/api/gastos';
+  private apiUrl = `${environment.apiUrl}/api/gastos`;
 
   constructor(private http: HttpClient) {}
 
@@ -70,12 +70,12 @@ export class PresupuestoComponent implements OnInit {
 
   // Carga los tipos de gasto y fondos disponibles
   cargarDatosIniciales() {
-    this.http.get<any[]>('${environment.apiUrl}/api/tipos-gasto').subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/api/tipos-gasto`).subscribe({
       next: (data) => this.tiposGasto = data,
       error: (err) => console.error('Error al cargar tipos de gasto', err)
     });
 
-    this.http.get<any[]>('${environment.apiUrl}/api/fondos').subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/api/fondos`).subscribe({
       next: (data) => this.fondos = data,
       error: (err) => console.error('Error al cargar fondos', err)
     });

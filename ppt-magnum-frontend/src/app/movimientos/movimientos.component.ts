@@ -51,7 +51,7 @@ export class MovimientosComponent implements OnInit {
       fecha_fin: this.fechaFin
     };
 
-    this.http.get<any[]>('${environment.apiUrl}/api/movimientos', { params })
+    this.http.get<any[]>(`${environment.apiUrl}/api/movimientos`, { params })
       .subscribe({
         next: (data) => {
           this.movimientos = data;

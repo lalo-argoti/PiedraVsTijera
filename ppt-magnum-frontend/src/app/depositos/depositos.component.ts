@@ -60,7 +60,7 @@ export class DepositosComponent implements OnInit {
   // Control de edición
   editandoDetalleId: number | null = null;
 
-  private apiUrl = '${environment.apiUrl}/api/depositos';
+  private apiUrl = `${environment.apiUrl}/api/depositos`;
 
   constructor(private http: HttpClient) {}
 
@@ -69,7 +69,7 @@ export class DepositosComponent implements OnInit {
   }
 
   cargarDatosIniciales() {
-    this.http.get<any[]>('${environment.apiUrl}/api/fondos').subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/api/fondos`).subscribe({
       next: (data) => this.fondos = data,
       error: (err) => console.error('Error al cargar fondos', err)
     });

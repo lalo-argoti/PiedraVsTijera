@@ -30,7 +30,7 @@ export class JugadorFormComponent {
      console.log('Login data enviada:', loginData);
 
       
-  this.http.post<any>('${environment.apiUrl}/api/user/autenticar', loginData).subscribe(
+  this.http.post<any>(`${environment.apiUrl}/api/user/autenticar`, loginData).subscribe(
   response => {
     console.log('Respuesta del backend:', response);
     localStorage.setItem('jwt', response.token); // ✅ Guarda el token

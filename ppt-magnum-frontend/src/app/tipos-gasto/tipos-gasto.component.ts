@@ -29,7 +29,7 @@ export class TiposGastoComponent implements OnInit {
   presupuestousd: number = 0;
   editandoCodigo: string | null = null;
 
-  private apiUrl = '${environment.apiUrl}/api/GastoTipo';
+  private apiUrl = `${environment.apiUrl}/api/GastoTipo`;
 
   constructor(private http: HttpClient, private router: Router) {}
 
