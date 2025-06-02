@@ -2,9 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-
 
 @Component({
   selector: 'app-tipos-gasto',
@@ -37,8 +36,15 @@ export class TiposGastoComponent implements OnInit {
     this.cargarTiposGasto();
   }
 
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
   cargarTiposGasto() {
-    this.http.get<any[]>(this.apiUrl).subscribe({
+    this.http.get<any[]>(this.apiUrl, { headers: this.getAuthHeaders() }).subscribe({
       next: (data) => {
         this.tiposGasto = data.map((tipo) => ({
           ...tipo,
@@ -65,7 +71,7 @@ export class TiposGastoComponent implements OnInit {
     };
 
     if (this.editandoCodigo) {
-      this.http.put(`${this.apiUrl}/${this.editandoCodigo}`, tipo).subscribe({
+      this.http.put(`${this.apiUrl}/${this.editandoCodigo}`, tipo, { headers: this.getAuthHeaders() }).subscribe({
         next: () => {
           alert('Actualizado correctamente');
           this.cargarTiposGasto();
@@ -74,7 +80,7 @@ export class TiposGastoComponent implements OnInit {
         error: err => console.error('Error al actualizar', err)
       });
     } else {
-      this.http.post(this.apiUrl, tipo).subscribe({
+      this.http.post(this.apiUrl, tipo, { headers: this.getAuthHeaders() }).subscribe({
         next: () => {
           alert('Guardado correctamente');
           this.cargarTiposGasto();
@@ -93,7 +99,7 @@ export class TiposGastoComponent implements OnInit {
   }
 
   eliminarTipo(id: number) {
-    this.http.delete(`${this.apiUrl}/${id}`).subscribe({
+    this.http.delete(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() }).subscribe({
       next: () => {
         alert('Eliminado correctamente');
         this.cargarTiposGasto();

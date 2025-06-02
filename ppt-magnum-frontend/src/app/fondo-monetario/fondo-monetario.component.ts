@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-
 
 interface FondoMonetario {
   id: number;
@@ -18,20 +17,21 @@ interface FondoMonetario {
   selector: 'app-fondo-monetario',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  
   templateUrl: './fondo-monetario.component.html',
   styleUrls: ['./fondo-monetario.component.css']
 })
 export class FondoMonetarioComponent implements OnInit {
   fondos: FondoMonetario[] = [];
+
   nombre: string = '';
+  tipo: 'Caja' | 'Bancaria' = 'Caja';
   capitalCOP: number = 0;
   capitalUSD: number = 0;
 
-  tipo: 'Caja' | 'Bancaria' = 'Caja';
   codigoGenerado: string = '';
   editandoId: number | null = null;
-  private apiUrl = '${environment.apiUrl}/api/FondoMonetario';
+
+  private apiUrl = `${environment.apiUrl}/api/FondoMonetario`;
 
   constructor(private http: HttpClient) {}
 
@@ -39,8 +39,15 @@ export class FondoMonetarioComponent implements OnInit {
     this.cargarFondos();
   }
 
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
   cargarFondos() {
-    this.http.get<FondoMonetario[]>(this.apiUrl).subscribe({
+    this.http.get<FondoMonetario[]>(this.apiUrl, { headers: this.getAuthHeaders() }).subscribe({
       next: (data) => {
         this.fondos = data.map(fondo => ({
           ...fondo,
@@ -48,7 +55,9 @@ export class FondoMonetarioComponent implements OnInit {
         }));
         this.codigoGenerado = this.generarCodigo();
       },
-      error: (err) => console.error('Error al cargar fondos', err)
+      error: (err) => {
+        console.error('Error al cargar fondos', err);
+      }
     });
   }
 
@@ -66,7 +75,7 @@ export class FondoMonetarioComponent implements OnInit {
     };
 
     if (this.editandoId !== null) {
-      this.http.put(`${this.apiUrl}/${this.editandoId}`, fondo).subscribe({
+      this.http.put(`${this.apiUrl}/${this.editandoId}`, fondo, { headers: this.getAuthHeaders() }).subscribe({
         next: () => {
           alert('Fondo actualizado correctamente');
           this.cargarFondos();
@@ -75,7 +84,7 @@ export class FondoMonetarioComponent implements OnInit {
         error: err => console.error('Error al actualizar', err)
       });
     } else {
-      this.http.post(this.apiUrl, fondo).subscribe({
+      this.http.post(this.apiUrl, fondo, { headers: this.getAuthHeaders() }).subscribe({
         next: () => {
           alert('Fondo creado correctamente');
           this.cargarFondos();
@@ -97,7 +106,7 @@ export class FondoMonetarioComponent implements OnInit {
 
   eliminar(id: number) {
     if (confirm('¿Está seguro de eliminar este fondo?')) {
-      this.http.delete(`${this.apiUrl}/${id}`).subscribe({
+      this.http.delete(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() }).subscribe({
         next: () => {
           alert('Fondo eliminado correctamente');
           this.cargarFondos();

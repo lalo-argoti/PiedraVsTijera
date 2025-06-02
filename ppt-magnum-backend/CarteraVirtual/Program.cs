@@ -12,7 +12,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // 🌐 CORS
-var allowedOrigin = "http://172.20.10.3:4200";
+var allowedOrigin = "http://31.97.133.226:4201";
 
 builder.Services.AddCors(options =>
 {

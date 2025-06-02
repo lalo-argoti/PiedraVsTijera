@@ -34,8 +34,12 @@ export class JugadorFormComponent {
   response => {
     console.log('Respuesta del backend:', response);
     localStorage.setItem('jwt', response.token); // ✅ Guarda el token
-    localStorage.setItem('jwt', response.IdUser);
-    localStorage.setItem('jwt', response.Username);
+    //localStorage.setItem('jwt', response.IdUser);
+    //localStorage.setItem('jwt', response.Username);
+    //localStorage.setItem('jwt', response.token);
+    localStorage.setItem('idUser', response.IdUser);
+    localStorage.setItem('username', response.Username);
+
     this.router.navigate(['/grafico']);
   },
   error => {

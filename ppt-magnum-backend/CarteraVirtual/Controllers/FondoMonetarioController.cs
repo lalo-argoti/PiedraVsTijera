@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using pdt.Data;
 using pdt.Models;
 using System.Security.Claims;
+using System;
+
 
 namespace pdt.Controllers
 {
@@ -12,12 +14,20 @@ namespace pdt.Controllers
     [Route("api/[controller]")]
     public class FondoMonetarioController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        //var random = new Random();
+        //var codigoGenerado = DateTime.Now.ToString("ddMMyyHHmmssfff") + random.Next(100, 1000).ToString();
 
+        private readonly AppDbContext _context;
+        private readonly Random _random = new Random();
         public FondoMonetarioController(AppDbContext context)
         {
             _context = context;
         }
+
+        //private string GenerarCodigo()
+        //{
+        //    return DateTime.Now.ToString("ddMMyyHHmmssfff") + _random.Next(100, 1000).ToString();
+        //}
 
         private int GetUserId()
         {
@@ -74,7 +84,9 @@ namespace pdt.Controllers
             int userId = GetUserId();
 
             var entity = new FondoMonetario
-            {
+            {  
+                //Codigo = GenerarCodigo(),        
+                
                 Nombre = model.Nombre,
                 Tipo = model.Tipo,
                 CapitalCOP = model.CapitalCOP,
