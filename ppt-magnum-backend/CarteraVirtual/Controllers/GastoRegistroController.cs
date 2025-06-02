@@ -29,12 +29,12 @@ namespace pdt.Controllers
                     FondoId = model.FondoId
                 };
 
-                _context.GastoRegistros.Add(registro);
+                _context.GastosRegistros.Add(registro);
                 _context.SaveChanges();
 
                 foreach (var detalle in model.Detalles)
                 {
-                    _context.GastoDetalles.Add(new GastoDetalle
+                    _context.GastosDetalles.Add(new GastoDetalle
                     {
                         GastoRegistroId = registro.Id,
                         GastoTipoId = detalle.GastoTipoId,
