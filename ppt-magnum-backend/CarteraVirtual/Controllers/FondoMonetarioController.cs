@@ -83,9 +83,13 @@ namespace pdt.Controllers
         {
             int userId = GetUserId();
 
+            
+            var random = new Random();
+            var codigoGenerado = DateTime.Now.ToString("ddMMyyHHmmssfff") + random.Next(100, 999).ToString();
+
             var entity = new FondoMonetario
             {  
-                //Codigo = GenerarCodigo(),        
+                Id = codigoGenerado,    
                 
                 Nombre = model.Nombre,
                 Tipo = model.Tipo,
