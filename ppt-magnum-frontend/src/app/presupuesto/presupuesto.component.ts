@@ -4,6 +4,16 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 
+// Interfaces locales (pueden generarse automáticamente desde C#)
+interface FondoMonetarioDto {
+  id: number;
+  nombre: string;
+}
+
+interface GastoTipoDto {
+  id: number;
+  nombre: string;
+}
 
 @Component({
   selector: 'app-presupuesto',
@@ -13,35 +23,21 @@ import { environment } from '../../environments/environment';
   styleUrls: ['./presupuesto.component.css']
 })
 export class PresupuestoComponent implements OnInit {
-  // Lista de meses para el selector
+  fondos: FondoMonetarioDto[] = [];
+  tiposGasto: GastoTipoDto[] = [];
+  gastos: any[] = [];
+
   meses = [
-    { id: 1, nombre: 'Enero' },
-    { id: 2, nombre: 'Febrero' },
-    { id: 3, nombre: 'Marzo' },
-    { id: 4, nombre: 'Abril' },
-    { id: 5, nombre: 'Mayo' },
-    { id: 6, nombre: 'Junio' },
-    { id: 7, nombre: 'Julio' },
-    { id: 8, nombre: 'Agosto' },
-    { id: 9, nombre: 'Septiembre' },
-    { id: 10, nombre: 'Octubre' },
-    { id: 11, nombre: 'Noviembre' },
-    { id: 12, nombre: 'Diciembre' }
+    { id: 1, nombre: 'Enero' }, { id: 2, nombre: 'Febrero' }, { id: 3, nombre: 'Marzo' },
+    { id: 4, nombre: 'Abril' }, { id: 5, nombre: 'Mayo' }, { id: 6, nombre: 'Junio' },
+    { id: 7, nombre: 'Julio' }, { id: 8, nombre: 'Agosto' }, { id: 9, nombre: 'Septiembre' },
+    { id: 10, nombre: 'Octubre' }, { id: 11, nombre: 'Noviembre' }, { id: 12, nombre: 'Diciembre' }
   ];
 
-  // Genera los últimos 10 años para el selector
-  anios = Array.from({length: 10}, (_, i) => new Date().getFullYear() - i);
+  anios = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i);
+  mesSeleccionado = new Date().getMonth() + 1;
+  anioSeleccionado = new Date().getFullYear();
 
-  // Datos del componente
-  gastos: any[] = [];
-  tiposGasto: any[] = [];
-  fondos: any[] = [];
-
-  // Valores seleccionados
-  mesSeleccionado: number = new Date().getMonth() + 1;
-  anioSeleccionado: number = new Date().getFullYear();
-
-  // Modelo para nuevo gasto
   nuevoGasto = {
     fecha: new Date().toISOString().split('T')[0],
     tipoGastoId: '',
@@ -51,14 +47,10 @@ export class PresupuestoComponent implements OnInit {
     descripcion: ''
   };
 
-  // Totales calculados
   totalGastadoCOP = 0;
   totalGastadoUSD = 0;
-
-  // Control de edición
   editandoId: number | null = null;
 
-  // URL de la API (debes reemplazarla con tu endpoint real)
   private apiUrl = `${environment.apiUrl}/api/gastos`;
 
   constructor(private http: HttpClient) {}
@@ -68,20 +60,18 @@ export class PresupuestoComponent implements OnInit {
     this.cargarGastos();
   }
 
-  // Carga los tipos de gasto y fondos disponibles
   cargarDatosIniciales() {
-    this.http.get<any[]>(`${environment.apiUrl}/api/tipos-gasto`).subscribe({
+    this.http.get<GastoTipoDto[]>(`${environment.apiUrl}/api/tipos-gasto`).subscribe({
       next: (data) => this.tiposGasto = data,
       error: (err) => console.error('Error al cargar tipos de gasto', err)
     });
 
-    this.http.get<any[]>(`${environment.apiUrl}/api/fondos`).subscribe({
+    this.http.get<FondoMonetarioDto[]>(`${environment.apiUrl}/api/fondos`).subscribe({
       next: (data) => this.fondos = data,
       error: (err) => console.error('Error al cargar fondos', err)
     });
   }
 
-  // Carga los gastos del mes/año seleccionado
   cargarGastos() {
     const params = {
       mes: this.mesSeleccionado.toString(),
@@ -97,13 +87,11 @@ export class PresupuestoComponent implements OnInit {
     });
   }
 
-  // Calcula los totales gastados
   calcularTotales() {
     this.totalGastadoCOP = this.gastos.reduce((sum, gasto) => sum + (gasto.montoCOP || 0), 0);
     this.totalGastadoUSD = this.gastos.reduce((sum, gasto) => sum + (gasto.montoUSD || 0), 0);
   }
 
-  // Maneja el envío del formulario
   onSubmit() {
     const gastoData = {
       ...this.nuevoGasto,
@@ -118,7 +106,6 @@ export class PresupuestoComponent implements OnInit {
     }
   }
 
-  // Crea un nuevo gasto
   private crearGasto(gastoData: any) {
     this.http.post(this.apiUrl, gastoData).subscribe({
       next: () => {
@@ -129,7 +116,6 @@ export class PresupuestoComponent implements OnInit {
     });
   }
 
-  // Actualiza un gasto existente
   private actualizarGasto(gastoData: any) {
     this.http.put(`${this.apiUrl}/${this.editandoId}`, gastoData).subscribe({
       next: () => {
@@ -140,7 +126,6 @@ export class PresupuestoComponent implements OnInit {
     });
   }
 
-  // Prepara el formulario para edición
   editarGasto(gasto: any) {
     this.editandoId = gasto.id;
     this.nuevoGasto = {
@@ -153,7 +138,6 @@ export class PresupuestoComponent implements OnInit {
     };
   }
 
-  // Elimina un gasto
   eliminarGasto(id: number) {
     if (confirm('¿Estás seguro de eliminar este gasto?')) {
       this.http.delete(`${this.apiUrl}/${id}`).subscribe({
@@ -163,13 +147,11 @@ export class PresupuestoComponent implements OnInit {
     }
   }
 
-  // Cancela la edición
   cancelarEdicion() {
     this.editandoId = null;
     this.limpiarFormulario();
   }
 
-  // Limpia el formulario
   limpiarFormulario() {
     this.nuevoGasto = {
       fecha: new Date().toISOString().split('T')[0],
@@ -181,20 +163,18 @@ export class PresupuestoComponent implements OnInit {
     };
   }
 
-  // Maneja el cambio de mes/año
   cambiarMes() {
     this.cargarGastos();
   }
 
-  // Helper para obtener nombre de tipo de gasto
   getNombreTipoGasto(id: number): string {
     const tipo = this.tiposGasto.find(t => t.id === id);
     return tipo ? tipo.nombre : 'Desconocido';
   }
 
-  // Helper para obtener nombre de fondo
   getNombreFondo(id: number): string {
     const fondo = this.fondos.find(f => f.id === id);
     return fondo ? fondo.nombre : 'Desconocido';
   }
 }
+

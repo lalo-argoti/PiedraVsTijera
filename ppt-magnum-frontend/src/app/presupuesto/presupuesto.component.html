@@ -28,21 +28,25 @@
       <input type="date" class="form-input" name="fecha" [(ngModel)]="nuevoGasto.fecha" required>
     </div>
 
-    <div class="form-group">
-      <label class="form-label">Tipo de Gasto</label>
-      <select class="form-select" name="tipoGastoId" [(ngModel)]="nuevoGasto.tipoGastoId" required>
-        <option value="">Seleccionar tipo</option>
-        <option *ngFor="let tipo of tiposGasto" [value]="tipo.id">{{ tipo.nombre }}</option>
-      </select>
-    </div>
+ <div class="form-group">
+  <label class="form-label">Tipo de GastoDEV</label>
+  <select class="form-select" name="tipoGastoId" [(ngModel)]="nuevoGasto.tipoGastoId" required>
+    <option value="">Seleccionar tipo</option>
+    <option *ngFor="let tipo of tiposGasto" [value]="tipo.id">
+      {{ tipo.nombre }}
+    </option>
+  </select>
+</div>
 
-    <div class="form-group">
-      <label class="form-label">Fondo Monetario</label>
-      <select class="form-select" name="fondoId" [(ngModel)]="nuevoGasto.fondoId" required>
-        <option value="">Seleccionar fondo</option>
-        <option *ngFor="let fondo of fondos" [value]="fondo.id">{{ fondo.nombre }}</option>
-      </select>
-    </div>
+<div class="form-group">
+  <label class="form-label">Fondo Monetario</label>
+  <select class="form-select" name="fondoId" [(ngModel)]="nuevoGasto.fondoId" required>
+    <option value="">Seleccionar fondo</option>
+    <option *ngFor="let fondo of fondos" [value]="fondo.id">
+      {{ fondo.nombre }}
+    </option>
+  </select>
+</div>
 
     <div class="form-group">
       <label class="form-label">Monto COP</label>
