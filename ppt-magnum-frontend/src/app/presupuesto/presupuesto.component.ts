@@ -25,7 +25,9 @@ interface GastoTipoDto {
 export class PresupuestoComponent implements OnInit {
   fondos: FondoMonetarioDto[] = [];
   tiposGasto: GastoTipoDto[] = [];
+
   gastos: any[] = [];
+
 
   meses = [
     { id: 1, nombre: 'Enero' }, { id: 2, nombre: 'Febrero' }, { id: 3, nombre: 'Marzo' },
@@ -50,6 +52,16 @@ export class PresupuestoComponent implements OnInit {
   totalGastadoCOP = 0;
   totalGastadoUSD = 0;
   editandoId: number | null = null;
+  
+  cargarDatosUsuario() {
+  this.http.get<FondoMonetarioDto[]>('/api/movimientos').subscribe({
+    next: data => this.fondos = data
+  });
+
+  this.http.get<GastoTipoDto[]>('/api/movimientos/tipos-gasto').subscribe({
+    next: data => this.tiposGasto = data
+  });
+  }
 
   private apiUrl = `${environment.apiUrl}/api/gastos`;
 
