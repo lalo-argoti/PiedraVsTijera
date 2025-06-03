@@ -1,0 +1,433 @@
+    1  mkdir ppt
+    2  cd ppt
+    3  git clone https://github.com/lalo-argoti/PiedraVsTijera/
+    4  ls
+    5  cd P
+    6  cd PiedraVsTijera/
+    7  ls
+    8  cd ppt-magnum-frontend/
+    9  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+   10  ls
+   11  cd ppt/
+   12  ls
+   13  cd PiedraVsTijera/
+   14  ls
+   15  cd ppt-magnum-backend/
+   16  ls
+   17  cd ppt-magnum-backend/
+   18  ls
+   19  cd ..
+   20  ls
+   21  git pull origin main
+   22  git config pull.rebase true
+   23  git pull origin main
+   24  ls
+   25  cd ppt-magnum-backend/
+   26  ls
+   27  cd CarteraVirtual/
+   28  ls
+   29  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+   30  cd ..
+   31  git pull origin main
+   32  cd ppt-magnum-backend/CarteraVirtual/
+   33  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+   34  cd ../..
+   35  git pull origin main
+   36  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+   37  docker ps -a
+   38  sudo docker stop a718fd01ecc4
+   39  sudo docker start a718fd01ecc4
+   40  cd ppt-magnum-backend/CarteraVirtual/
+   41  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+   42  ls
+   43  cd ppt/
+   44  ls
+   45  cd PiedraVsTijera/
+   46  ls
+   47  cd ppt-magnum-backend/
+   48  ls
+   49  cd CarteraVirtual/
+   50  ls
+   51  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+   52  sudo docker ps -a
+   53  sudo docker sto 28645100320f
+   54  sudo docker stop 28645100320f
+   55  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+   56  ls
+   57  cd ppt/
+   58  ls
+   59  cd PiedraVsTijera/
+   60  ls
+   61  cd ppt-magnum-backend/
+   62  ls
+   63  cd CarteraVirtual/
+   64  ls
+   65  cd ..
+   66  cd ppt-magnum-frontend/
+   67  ls
+   68  cd src/
+   69  ls
+   70  cd app/
+   71  ls
+   72  cd ..
+   73  ls
+   74  cd environments/
+   75  ls
+   76  nano environment.ts 
+   77  sudo docker ps -a
+   78  sudo docker rm 48333f8e80cc
+   79  sudo docker stop 48333f8e80cc
+   80  docker rm 48333f8e80cc	angular-docker
+   81  docker rm 363de9c22175	angular-docker
+   82  docker rm 2a4153663d51	mcr.microsoft.com/dotnet/sdk:8.0
+   83  docker rm 1e490cf57bb3	115e46e86368
+   84  docker rm a718fd01ecc4	115e46e86368
+   85  docker rm 5f5482d4b138	coralines2
+   86  docker rm 0b5188bade78	coralines2
+   87  docker rm fd35f77930af	coralines2
+   88  docker rm ab8478d23440	coralines2
+   89  docker ps -a
+   90  cd ..
+   91  git pull origin main
+   92  docker ps -a
+   93  docker stop 974b4d377ab6
+   94  docker rm 974b4d377ab6
+   95  cd ppt-magnum-frontend/
+   96  mkdir src/environments
+   97  nano environment.ts
+   98  sudo docker ps -a
+   99  docker stop e44ae14671a3	docker rm e44ae14671a3
+  100  docker stop e44ae14671a3
+  101  docker rm e44ae14671a3
+  102  ç
+  103  ls
+  104  cd ppt/p
+  105  cd ppt/
+  106  ls
+  107  cd PiedraVsTijera/
+  108  ls
+  109  git pull origin main
+  110  git add .
+  111  git commit 
+  112  git pull origin main
+  113  git pull origin main --rebase
+  114  git pull --rebase origin main 
+  115  git pull origin main 
+  116  git reset --hard
+  117  git pull origin main
+  118  cd ppt-magnum-frontend/
+  119  ls
+  120  1. Dockers (puede requerir permisos sudo)
+  121  1.1 Listar docker activos
+  122  1.2 Listar todos los dockers
+  123  2. Construir, correr y accediendo a los docker
+  124  2.1 Mysql
+  125  2.2 Backend (c#)
+  126  2.3 Frontend (Angular (typescript))
+  127  2.0 Detener y eliminar un dcoker
+  128  sudo docker ps -a
+  129  sudo docker stop 1e490cf57bb3
+  130  docker stop +a718fd01ecc4
+  131  docker stop a718fd01ecc4
+  132  docker ps 
+  133  nano src/
+  134  nano src/environments/environment.ts 
+  135  docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=PruebDeTalento!"    -p 1433:1433 --name sqlserver    -d mcr.microsoft.com/mssql/server:2022-latest
+  136  cd ppt/PiedraVsTijera/ppt-magnum-backend/
+  137  ls
+  138  cd CarteraVirtual/
+  139  dotnet ef migrations add InitialCreate
+  140  apt  install dotnet-host-8.0
+  141  dotnet ef migrations add InitialCreate
+  142  dotnet ef database update
+  143  sudo rm -rf /usr/share/dotnet /etc/dotnet /usr/lib/dotnet
+  144  sudo apt remove dotnet* aspnetcore* -y
+  145  wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
+  146  chmod +x dotnet-install.sh
+  147  ./dotnet-install.sh --channel 8.0
+  148  export DOTNET_ROOT=$HOME/.dotnet
+  149  export PATH=$PATH:$HOME/.dotnet:$HOME/.dotnet/tools
+  150  source ~/.bashrc
+  151  dotnet tool install --global dotnet-ef
+  152  dotnet ef --version
+  153  dotnet ef migrations add InitialCreate
+  154  ls
+  155  cd ppt/
+  156  ls
+  157  cd PiedraVsTijera/
+  158  ls
+  159  cd ppt-magnum-backend/
+  160  ls
+  161  cd CarteraVirtual/
+  162  ls
+  163  cd Controllers/
+  164  ls
+  165  nano UserController.cs 
+  166  docker ps -a
+  167  docker stop 118056a28469
+  168  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+  169  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+  170  docker ps -a
+  171  cd ..
+  172  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+  173  ls
+  174  cd ppt/
+  175  cd PiedraVsTijera/
+  176  ls
+  177  git pull origin main
+  178  nano ppt-magnum-frontend/src/app/tipos-gasto/tipos-gasto.component.tst
+  179  nano ppt-magnum-frontend/src/app/tipos-gasto/tipos-gasto.component.ts
+  180  ps aux | grep ng
+  181  ps aux | grep ng
+  182  kill -9 8390
+  183  ps aux | grep ng
+  184  cd ppt-magnum-frontend/
+  185  ls
+  186    docker build -t angular-docker .
+  187    docker run -p 4201:4200 angular-docker
+  188  nano src/app/tipos-gasto/tipos-gasto.component.ts 
+  189  ls
+  190  nano angular.json 
+  191  nano package.json 
+  192  nano proxy.conf.json 
+  193  docker ps -a
+  194  sudo docker stop 82a0453e8dec
+  195  sudo docker rm 82a0453e8dec
+  196    docker build -t angular-docker .
+  197    docker run -p 4201:4200 angular-docker
+  198  ls
+  199  cd src
+  200  ls
+  201  cd app/
+  202  ls
+  203  cd app
+  204  cd jugador-form/
+  205  ls
+  206  nano jugador-form.component.ts 
+  207  docker ps -a
+  208  docker stop ba4488cbbb4b
+  209    docker build -t angular-docker .
+  210    docker build -t angular-docker .
+  211  cd ..
+  212  cd ..
+  213  cd ..
+  214    docker build -t angular-docker .
+  215    docker run -p 4201:4200 angular-docker
+  216  ls
+  217  cd ppt/
+  218  ls
+  219  cd PiedraVsTijera/
+  220  ls
+  221  cd ppt-magnum-backend/
+  222  ls
+  223  cd CarteraVirtual/
+  224  ls
+  225  nano Program.cs 
+  226  sudo docker ps -a
+  227  sudo docer stop 2a4153663d51
+  228  sudo docker stop 2a4153663d51
+  229  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+  230  docker ps -a
+  231  sudo docker stop 9a00cc1d7ee2
+  232  ls
+  233  cd ..
+  234  cd ppt-magnum-backend/CarteraVirtual/
+  235  ls
+  236  dotnet ef migrations add InitialCreate
+  237  nano ~/.bashrc
+  238  source ~/.bashrc
+  239  dotnet --version
+  240  dotnet ef migrations add InitialCreate
+  241  dotnet ef database update
+  242  docker exec -it sqlserver /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'PruebDeTalento!'
+  243  /opt/mssql-tools/bin/sqlcmd -S 31.97.133.226 -U SA -P 'PruebDeTalento!'  # Añade -d miBaseDatos si es necesario
+  244  cd ppt/PiedraVsTijera/ppt-magnum-backend/
+  245  ls
+  246  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+  247  docker ps -a
+  248  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+  249  cd CarteraVirtual/
+  250  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+  251  sqlcmd -S 31.97.133.226,1433 -U SA -P 'PruebDeTalento!' -Q "SELECT 1;"
+  252  apt-get install sqlcmd
+  253  curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
+  254  sudo apt-get update
+  255  sudo apt-get install mssql-tools18 unixodbc-dev
+  256  curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+  257  sudo apt-get update
+  258  sudo apt-get install mssql-tools18 unixodbc-dev
+  259  sqlcmd -S 31.97.133.226,1433 -U SA -P 'PruebDeTalento!' -Q "SELECT 1;"
+  260  sudo apt-get install mssql-tools18 unixodbc-dev
+  261  sudo apt-get install mssql-tools18
+  262  echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bash_profile
+  263  source ~/.bash_profile
+  264  sqlcmd -S 31.97.133.226,1433 -U SA -P 'PruebDeTalento!' -Q "SELECT 1;"
+  265  sqlcmd -S 31.97.133.226,1433 -U SA -P 'PruebDeTalento!' -Q "SELECT 1;" -N -C
+  266  docker ps -a
+  267  docker stop 21de0fd4d4ea
+  268  nano appsettings.json 
+  269  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+  270  nano appsettings.json 
+  271  docker ps -a
+  272  docker stop b0b2d6dac156
+  273  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+  274  ls
+  275  cd ppt
+  276  ls
+  277  cd PiedraVsTijera/
+  278  ls
+  279  cd ppt-magnum-frontend/
+  280  ls
+  281  cd src/
+  282  ls
+  283  cd ..
+  284  ls
+  285  cd src/
+  286  ls
+  287  cd app/
+  288  ls
+  289  cd tipos-gasto/
+  290  ls
+  291  nano tipos-gasto.component.ts 
+  292  cd ..
+  293  nano fondo-monetario/fondo-monetario.component.ts 
+  294  nano tipos-gasto/tipos-gasto.component.ts
+  295  nano fondo-monetario/fondo-monetario.component.ts 
+  296  nano tipos-gasto/tipos-gasto.component.ts
+  297  nano fondo-monetario/fondo-monetario.component.ts 
+  298  cd ..
+  299  cd ..
+  300    docker build -t angular-docker .
+  301    docker run -p 4200:4200 angular-docker
+  302  docker ps 
+  303  docker stop 8e4f796f37a5
+  304    docker run -p 4201:4200 angular-docker
+  305  docker rm 6c7f67376459	angular-docker
+  306  docker rm 8e4f796f37a5	angular-docker
+  307  docker rm 6c7f67376459	angular-docker
+  308  docker rm 8e4f796f37a5	angular-docker
+  309  docker rm 6c7f67376459
+  310  angular-docker
+  311  angular-docker
+  312  docker stop 6c7f67376459
+  313  docker stop 8e4f796f37a5
+  314  docker rm 6c7f67376459
+  315  docker rm 8e4f796f37a5
+  316  docker ps -a
+  317  docker stop 153466e6f735
+  318  docker rm 153466e6f735
+  319    docker build -t angular-docker .
+  320    docker run -p 4201:4200 angular-docker
+  321   cd /home/carlos
+  322  cd ../ppt-magnum-babac
+  323  cd ../ppt-magnum-backend/CarteraVirtual/Controllers/
+  324  ls
+  325  nano FondoMonetarioController.cs 
+  326  docker ps -a
+  327  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+  328  docker stop e7accdc88a03
+  329  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+  330  cd ..
+  331  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+  332  nano Controllers/FondoMonetarioController.cs 
+  333  nano Controllers/FondoMonetarioController.cs 
+  334  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+  335  nano Controllers/FondoMonetarioController.cs 
+  336  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+  337  nano Controllers/FondoMonetarioController.cs 
+  338  sudo docker run --rm -v $(pwd):/app -w /app -p 8000:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+  339  cd ppt/
+  340  ls
+  341  cd PiedraVsTijera/
+  342  ls
+  343  cd ppt-magnum-frontend/
+  344  ls
+  345  cd src/
+  346  ls
+  347  cd app
+  348  ls
+  349  nano src/app/tipos-gasto/tipos-gasto.component.ts 
+  350  nano tipos-gasto/tipos-gasto.component.ts 
+  351  nano fondo-monetario/fondo-monetario.component.
+  352  nano fondo-monetario/fondo-monetario.component.ts 
+  353  nano fondo-monetario/fondo-monetario.component.tsd 
+  354  cd ..
+  355  cd ..
+  356    docker build -t angular-docker .
+  357    docker run -p 4200:4200 angular-docker
+  358  docker ps -a
+  359  docker stop a1532cc466de
+  360  docker stop 647eeeb4fe1d
+  361    docker run -p 4201:4200 angular-docker
+  362  cd ppt/
+  363  cd PiedraVsTijera/
+  364  ls
+  365  cd ppt-magnum-frontend/
+  366  ls
+  367  cd src/
+  368  ls
+  369  cd app/
+  370  ls
+  371  nano fondo-monetario/fondo-monetario.component.ts 
+  372  ls
+  373  cd ppt
+  374  ls
+  375  cd PiedraVsTijera/
+  376  ls
+  377  git add .
+  378  git commit -m "from srv"
+  379  git push -u prigin main
+  380  git push -u origin main
+  381  git push -u -force origin main
+  382  git push -u --force origin main
+  383  nano ppt-magnum-backend/CarteraVirtual/Controllers/FondoMonetarioController.cs 
+  384  cd ppt-magnum-backend/
+  385  sudo docker run --rm -v $(pwd):/app -w /app -p 8001:800 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+  386  sudo docker run --rm -v $(pwd):/app -w /app -p 8001:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+  387  cd CarteraVirtual/
+  388  sudo docker run --rm -v $(pwd):/app -w /app -p 8001:8000 mcr.microsoft.com/dotnet/sdk:8.0 dotnet run
+  389  ls
+  390  cd ppt/p
+  391  cd ppt/PiedraVsTijera/
+  392  ls
+  393  cd ppt-magnum-backend/
+  394  ls
+  395  cd CarteraVirtual/
+  396  ls
+  397  ls
+  398  ls
+  399  cd Controllers/
+  400  ls
+  401  cd ..
+  402  ls
+  403  nano appsettings.json 
+  404  nano ../../.gitignore 
+  405  git add .
+  406  git commit -m ""jn2
+  407  git push -u origin main
+  408  cd ..
+  409  cd ..
+  410  git add .
+  411  git commit -m ""jn2v2
+  412  git commit -m "jn2v2"
+  413  git push -u origin main
+  414  ls
+  415  nano .gitignore 
+  416  git pull -u origin main
+  417  git pull  origin main
+  418  nano ppt-magnum-backend/CarteraVirtual/appsettings.
+  419  nano ppt-magnum-backend/CarteraVirtual/appsettings.json 
+  420  nano ppt-magnum-backend/CarteraVirtual/appsettings.json 
+  421  git add .
+  422  commit -m "gitignorando"
+  423  git commit -m "gitignorando"
+  424  git push -u origin main
+  425  git rm --cached /ppt-magnum-frontend/src/environments/environment.ts
+  426  git rm --cached /ppt-magnum-frontend/src/environments/environment.prod.ts
+  427  git rm --cached /ppt-magnum-backend/CarteraVirtual/appsettings.json
+  428  git rm --cached ppt-magnum-backend/CarteraVirtual/appsettings.json
+  429  git rm --cached ppt-magnum-backend/CarteraVirtual/appsettings.json
+  430  git rm --cached ppt-magnum-backend/CarteraVirtual/appsettings.json
+  431  git rm --cached ppt-magnum-frontend/src/environments/environment.prod.ts
+  432  git rm --cached ppt-magnum-frontend/src/environments/environment.ts
+  433  history >> ~hst
