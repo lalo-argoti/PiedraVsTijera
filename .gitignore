@@ -1,3 +1,4 @@
 # Ignore local environment files
 /ppt-magnum-frontend/src/environments/environment.ts
 /ppt-magnum-frontend/src/environments/environment.prod.ts
+/ppt-magnum-backend/CarteraVirtual/appsettings.json
