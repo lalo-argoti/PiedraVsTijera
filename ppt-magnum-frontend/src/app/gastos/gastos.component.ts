@@ -4,6 +4,15 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 
+interface FondoMonetarioDto {
+  id: number;
+  nombre: string;
+}
+
+interface GastoTipoDto {
+  id: number;
+  nombre: string;
+}
 
 @Component({
   selector: 'app-gastos',
@@ -13,123 +22,147 @@ import { environment } from '../../environments/environment';
   styleUrls: ['./gastos.component.css']
 })
 export class GastosComponent implements OnInit {
-  encabezado = {
+  fondos: FondoMonetarioDto[] = [];
+  tiposGasto: GastoTipoDto[] = [];
+  gastos: any[] = [];
+
+  meses = [
+    { id: 1, nombre: 'Enero' }, { id: 2, nombre: 'Febrero' }, { id: 3, nombre: 'Marzo' },
+    { id: 4, nombre: 'Abril' }, { id: 5, nombre: 'Mayo' }, { id: 6, nombre: 'Junio' },
+    { id: 7, nombre: 'Julio' }, { id: 8, nombre: 'Agosto' }, { id: 9, nombre: 'Septiembre' },
+    { id: 10, nombre: 'Octubre' }, { id: 11, nombre: 'Noviembre' }, { id: 12, nombre: 'Diciembre' }
+  ];
+
+  anios = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i);
+  mesSeleccionado = new Date().getMonth() + 1;
+  anioSeleccionado = new Date().getFullYear();
+
+  nuevoGasto = {
     fecha: new Date().toISOString().split('T')[0],
-    observaciones: '',
-    criterio: ''
-  };
-
-  detalle = {
-    gastoTipoId: '',
+    tipoGastoId: '',
     fondoId: '',
-    monto: 0
+    montoCOP: 0,
+    montoUSD: 0,
+    descripcion: ''
   };
 
-  detalles: any[] = [];
-  tiposGasto: any[] = [];
-  fondos: any[] = [];
+  totalGastadoCOP = 0;
+  totalGastadoUSD = 0;
+  editandoId: number | null = null;
 
-  total = 0;
-  editandoDetalleId: number | null = null;
-
-  private apiUrl = `${environment.apiUrl}/api/gastoregistro`;
-  propietarioId = 3; // Temporal o extraído del login
+  private apiUrl = `${environment.apiUrl}/api/gastos`;
+  private initUrl = `${environment.apiUrl}/api/presupuestomovimiento/init`;
 
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
     this.cargarDatosIniciales();
+    this.cargarGastos();
   }
 
   cargarDatosIniciales() {
-    this.http.get<any[]>(`${environment.apiUrl}/api/GastosTipo/${this.propietarioId}`).subscribe({
-      next: (data) => this.tiposGasto = data,
-      error: (err) => console.error('Error al cargar tipos de gasto', err)
-    });
-
-    this.http.get<any[]>(`${environment.apiUrl}/api/Fondos/${this.propietarioId}`).subscribe({
-      next: (data) => this.fondos = data,
-      error: (err) => console.error('Error al cargar fondos', err)
+    this.http.get<any>(this.initUrl).subscribe({
+      next: (data) => {
+        this.fondos = data.fondos;
+        this.tiposGasto = data.tiposGasto;
+      },
+      error: (err) => console.error('Error al cargar datos iniciales', err)
     });
   }
 
-  agregarDetalle() {
-    if (this.editandoDetalleId !== null) {
-      this.detalles[this.editandoDetalleId] = { ...this.detalle };
-      this.editandoDetalleId = null;
-    } else {
-      this.detalles.push({ ...this.detalle });
-    }
-
-    this.calcularTotal();
-    this.limpiarFormularioDetalle();
-  }
-
-  editarDetalle(index: number) {
-    this.editandoDetalleId = index;
-    this.detalle = { ...this.detalles[index] };
-  }
-
-  eliminarDetalle(index: number) {
-    this.detalles.splice(index, 1);
-    this.calcularTotal();
-  }
-
-  cancelarEdicionDetalle() {
-    this.editandoDetalleId = null;
-    this.limpiarFormularioDetalle();
-  }
-
-  limpiarFormularioDetalle() {
-    this.detalle = {
-      gastoTipoId: '',
-      fondoId: '',
-      monto: 0
+  cargarGastos() {
+    const params = {
+      mes: this.mesSeleccionado.toString(),
+      anio: this.anioSeleccionado.toString()
     };
+
+    this.http.get<any[]>(this.apiUrl, { params }).subscribe({
+      next: (data) => {
+        this.gastos = data;
+        this.calcularTotales();
+      },
+      error: (err) => console.error('Error al cargar gastos', err)
+    });
   }
 
-  calcularTotal() {
-    this.total = this.detalles.reduce((sum, item) => sum + (item.monto || 0), 0);
+  calcularTotales() {
+    this.totalGastadoCOP = this.gastos.reduce((sum, gasto) => sum + (gasto.montoCOP || 0), 0);
+    this.totalGastadoUSD = this.gastos.reduce((sum, gasto) => sum + (gasto.montoUSD || 0), 0);
   }
 
   onSubmit() {
-    if (this.detalles.length === 0) {
-      alert('Debe agregar al menos un detalle');
-      return;
-    }
-
-    const propietario = '3'; // Puedes obtenerlo del token si usas autenticación
-
-    const payload = {
-      fecha: this.encabezado.fecha,
-      observaciones: this.encabezado.observaciones,
-      criterio: this.encabezado.criterio,
-      propietario: propietario,
-      fondoId: this.detalles[0]?.fondoId || 1,
-      detalles: this.detalles.map(d => ({
-        gastoTipoId: d.gastoTipoId,
-        monto: d.monto
-      }))
+    const gastoData = {
+      ...this.nuevoGasto,
+      mes: this.mesSeleccionado,
+      anio: this.anioSeleccionado
     };
 
-    this.http.post(this.apiUrl, payload).subscribe({
+    if (this.editandoId !== null) {
+      this.actualizarGasto(gastoData);
+    } else {
+      this.crearGasto(gastoData);
+    }
+  }
+
+  private crearGasto(gastoData: any) {
+    this.http.post(this.apiUrl, gastoData).subscribe({
       next: () => {
-        alert('Transacción guardada correctamente');
-        this.resetearFormulario();
+        this.cargarGastos();
+        this.limpiarFormulario();
       },
-      error: (err) => console.error('Error al guardar transacción', err)
+      error: (err) => console.error('Error al crear gasto', err)
     });
   }
 
-  resetearFormulario() {
-    this.encabezado = {
-      fecha: new Date().toISOString().split('T')[0],
-      observaciones: '',
-      criterio: ''
+  private actualizarGasto(gastoData: any) {
+    this.http.put(`${this.apiUrl}/${this.editandoId}`, gastoData).subscribe({
+      next: () => {
+        this.cargarGastos();
+        this.limpiarFormulario();
+      },
+      error: (err) => console.error('Error al actualizar gasto', err)
+    });
+  }
+
+  editarGasto(gasto: any) {
+    this.editandoId = gasto.id;
+    this.nuevoGasto = {
+      fecha: gasto.fecha.split('T')[0],
+      tipoGastoId: gasto.tipoGastoId,
+      fondoId: gasto.fondoId,
+      montoCOP: gasto.montoCOP,
+      montoUSD: gasto.montoUSD,
+      descripcion: gasto.descripcion
     };
-    this.detalles = [];
-    this.limpiarFormularioDetalle();
-    this.calcularTotal();
+  }
+
+  eliminarGasto(id: number) {
+    if (confirm('¿Estás seguro de eliminar este gasto?')) {
+      this.http.delete(`${this.apiUrl}/${id}`).subscribe({
+        next: () => this.cargarGastos(),
+        error: (err) => console.error('Error al eliminar gasto', err)
+      });
+    }
+  }
+
+  cancelarEdicion() {
+    this.editandoId = null;
+    this.limpiarFormulario();
+  }
+
+  limpiarFormulario() {
+    this.nuevoGasto = {
+      fecha: new Date().toISOString().split('T')[0],
+      tipoGastoId: '',
+      fondoId: '',
+      montoCOP: 0,
+      montoUSD: 0,
+      descripcion: ''
+    };
+  }
+
+  cambiarMes() {
+    this.cargarGastos();
   }
 
   getNombreTipoGasto(id: number): string {

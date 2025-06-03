@@ -59,18 +59,18 @@ export class PresupuestoComponent implements OnInit {
     this.cargarDatosIniciales();
     this.cargarGastos();
   }
+  
+  
 
-  cargarDatosIniciales() {
-    this.http.get<GastoTipoDto[]>(`${environment.apiUrl}/api/tipos-gasto`).subscribe({
-      next: (data) => this.tiposGasto = data,
-      error: (err) => console.error('Error al cargar tipos de gasto', err)
-    });
-
-    this.http.get<FondoMonetarioDto[]>(`${environment.apiUrl}/api/fondos`).subscribe({
-      next: (data) => this.fondos = data,
-      error: (err) => console.error('Error al cargar fondos', err)
-    });
-  }
+ cargarDatosIniciales() {
+  this.http.get<any>(`${environment.apiUrl}/api/presupuestomovimiento/init`).subscribe({
+    next: (data) => {
+      this.fondos = data.fondos;
+      this.tiposGasto = data.tiposGasto;
+    },
+    error: (err) => console.error('Error al cargar datos iniciales', err)
+  });
+}
 
   cargarGastos() {
     const params = {
@@ -126,6 +126,8 @@ export class PresupuestoComponent implements OnInit {
     });
   }
 
+
+  
   editarGasto(gasto: any) {
     this.editandoId = gasto.id;
     this.nuevoGasto = {

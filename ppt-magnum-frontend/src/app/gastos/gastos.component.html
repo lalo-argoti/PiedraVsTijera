@@ -1,88 +1,101 @@
-<div class="form-container">
-  <h2 class="form-title">Registro de Gastos</h2>
-
-  <!-- Encabezado -->
-  <div class="form-group">
-    <label class="form-label">Fecha</label>
-    <input type="date" class="form-input" [(ngModel)]="encabezado.fecha" required>
-  </div>
-
-  <!-- CAMBIO: Quitamos Nombre Comercio y Tipo Documento -->
-  <div class="form-group">
-    <label class="form-label">Criterio</label>
-    <input type="text" class="form-input" [(ngModel)]="encabezado.criterio">
-  </div>
-
-  <div class="form-group">
-    <label class="form-label">Observaciones</label>
-    <textarea class="form-textarea" [(ngModel)]="encabezado.observaciones"></textarea>
-  </div>
-
-  <div class="form-divider"></div>
-
-  <!-- Detalle -->
-  <h3>Detalle de Gastos</h3>
-
-  <div class="form-group">
-    <label class="form-label">Tipo de Gasto</label>
-    <select class="form-select" [(ngModel)]="detalle.gastoTipoId" required>
-      <option value="">Seleccionar tipo</option>
-      <option *ngFor="let tipo of tiposGasto" [value]="tipo.id">{{ tipo.nombre }}</option>
+<div class="filtros">
+  <label>
+    Mes:
+    <select [(ngModel)]="mesSeleccionado" (change)="cambiarMes()">
+      <option *ngFor="let mes of meses" [value]="mes.id">{{ mes.nombre }}</option>
     </select>
-  </div>
+  </label>
 
-  <div class="form-group">
-    <label class="form-label">Fondo Monetario</label>
-    <select class="form-select" [(ngModel)]="detalle.fondoId" required>
-      <option value="">Seleccionar fondo</option>
-      <option *ngFor="let fondo of fondos" [value]="fondo.id">{{ fondo.nombre }}</option>
+  <label>
+    Año:
+    <select [(ngModel)]="anioSeleccionado" (change)="cambiarMes()">
+      <option *ngFor="let anio of anios" [value]="anio">{{ anio }}</option>
     </select>
-  </div>
-
-  <div class="form-group">
-    <label class="form-label">Monto</label>
-    <input type="number" class="form-input" [(ngModel)]="detalle.monto" min="0" step="0.01">
-  </div>
-
-  <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="agregarDetalle()">
-      {{ editandoDetalleId !== null ? 'Actualizar' : 'Agregar' }} Detalle
-    </button>
-    <button *ngIf="editandoDetalleId !== null" type="button" class="btn btn-cancel" (click)="cancelarEdicionDetalle()">
-      Cancelar
-    </button>
-  </div>
-
-  <div class="form-group">
-    <h4>Detalles Agregados ({{detalles.length}})</h4>
-    <p>Total: {{ total | currency:'COP':'symbol':'1.0-0' }}</p>
-
-    <ul class="items-list" *ngIf="detalles.length > 0; else noDetalles">
-      <li class="list-item" *ngFor="let item of detalles; let i = index">
-        <div class="item-info">
-          <strong>{{ getNombreTipoGasto(item.gastoTipoId) }} - {{ getNombreFondo(item.fondoId) }}</strong><br>
-          <small>Monto: {{ item.monto | currency:'COP':'symbol':'1.0-0' }}</small>
-        </div>
-        <div class="item-actions">
-          <button class="btn btn-edit" (click)="editarDetalle(i)">Editar</button>
-          <button class="btn btn-delete" (click)="eliminarDetalle(i)">Eliminar</button>
-        </div>
-      </li>
-    </ul>
-
-    <ng-template #noDetalles>
-      <p class="text-center">No hay detalles agregados</p>
-    </ng-template>
-  </div>
-
-  <div class="form-divider"></div>
-
-  <div class="btn-group">
-    <button type="button" class="btn btn-secondary" (click)="onSubmit()" [disabled]="detalles.length === 0">
-      Guardar Transacción
-    </button>
-    <button type="button" class="btn btn-cancel" (click)="resetearFormulario()">
-      Limpiar Todo
-    </button>
-  </div>
+  </label>
 </div>
+
+<table class="tabla-gastos" border="1" cellpadding="5" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Fecha</th>
+      <th>Tipo Gasto</th>
+      <th>Fondo</th>
+      <th>Monto COP</th>
+      <th>Monto USD</th>
+      <th>Descripción</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let gasto of gastos">
+      <td>{{ gasto.fecha | date:'yyyy-MM-dd' }}</td>
+      <td>{{ getNombreTipoGasto(gasto.tipoGastoId) }}</td>
+      <td>{{ getNombreFondo(gasto.fondoId) }}</td>
+      <td>{{ gasto.montoCOP | number:'1.2-2' }}</td>
+      <td>{{ gasto.montoUSD | number:'1.2-2' }}</td>
+      <td>{{ gasto.descripcion }}</td>
+      <td>
+        <button (click)="editarGasto(gasto)">Editar</button>
+        <button (click)="eliminarGasto(gasto.id)">Eliminar</button>
+      </td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="3"><strong>Total Gastado:</strong></td>
+      <td><strong>{{ totalGastadoCOP | number:'1.2-2' }}</strong></td>
+      <td><strong>{{ totalGastadoUSD | number:'1.2-2' }}</strong></td>
+      <td colspan="2"></td>
+    </tr>
+  </tfoot>
+</table>
+
+<h3>{{ editandoId ? 'Editar Gasto' : 'Nuevo Gasto' }}</h3>
+<form (ngSubmit)="onSubmit()" #gastoForm="ngForm">
+  <div>
+    <label>Fecha:
+      <input type="date" [(ngModel)]="nuevoGasto.fecha" name="fecha" required />
+    </label>
+  </div>
+
+  <div>
+    <label>Tipo Gasto:
+      <select [(ngModel)]="nuevoGasto.tipoGastoId" name="tipoGastoId" required>
+        <option value="" disabled>Seleccione tipo</option>
+        <option *ngFor="let tipo of tiposGasto" [value]="tipo.id">{{ tipo.nombre }}</option>
+      </select>
+    </label>
+  </div>
+
+  <div>
+    <label>Fondo:
+      <select [(ngModel)]="nuevoGasto.fondoId" name="fondoId" required>
+        <option value="" disabled>Seleccione fondo</option>
+        <option *ngFor="let fondo of fondos" [value]="fondo.id">{{ fondo.nombre }}</option>
+      </select>
+    </label>
+  </div>
+
+  <div>
+    <label>Monto COP:
+      <input type="number" [(ngModel)]="nuevoGasto.montoCOP" name="montoCOP" min="0" required />
+    </label>
+  </div>
+
+  <div>
+    <label>Monto USD:
+      <input type="number" [(ngModel)]="nuevoGasto.montoUSD" name="montoUSD" min="0" required />
+    </label>
+  </div>
+
+  <div>
+    <label>Descripción:
+      <input type="text" [(ngModel)]="nuevoGasto.descripcion" name="descripcion" />
+    </label>
+  </div>
+
+  <div>
+    <button type="submit" [disabled]="!gastoForm.form.valid">{{ editandoId ? 'Actualizar' : 'Agregar' }}</button>
+    <button type="button" (click)="cancelarEdicion()" *ngIf="editandoId">Cancelar</button>
+  </div>
+</form>
