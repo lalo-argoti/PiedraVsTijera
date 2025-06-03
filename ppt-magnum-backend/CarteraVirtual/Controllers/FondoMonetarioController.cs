@@ -89,7 +89,7 @@ namespace pdt.Controllers
 
             var entity = new FondoMonetario
             {  
-                Id = codigoGenerado,    
+                //Id = codigoGenerado,    
                 
                 Nombre = model.Nombre,
                 Tipo = model.Tipo,
