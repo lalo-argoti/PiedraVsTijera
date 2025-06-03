@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 
-
 @Component({
   selector: 'app-depositos',
   standalone: true,
@@ -13,7 +12,6 @@ import { environment } from '../../environments/environment';
   styleUrls: ['./depositos.component.css']
 })
 export class DepositosComponent implements OnInit {
-  // Encabezado del depósito
   encabezado = {
     fecha: new Date().toISOString().split('T')[0],
     descripcion: '',
@@ -22,7 +20,6 @@ export class DepositosComponent implements OnInit {
     referencia: ''
   };
 
-  // Detalle del depósito
   detalle = {
     fondoId: '',
     montoCOP: 0,
@@ -31,12 +28,10 @@ export class DepositosComponent implements OnInit {
     referenciaPago: ''
   };
 
-  // Lista de detalles
   detalles: any[] = [];
 
-  // Datos para selects
   meses = [
-    { id: 1, nombre: 'Enero' }, { id: 2, nombre: 'Febrero' }, 
+    { id: 1, nombre: 'Enero' }, { id: 2, nombre: 'Febrero' },
     { id: 3, nombre: 'Marzo' }, { id: 4, nombre: 'Abril' },
     { id: 5, nombre: 'Mayo' }, { id: 6, nombre: 'Junio' },
     { id: 7, nombre: 'Julio' }, { id: 8, nombre: 'Agosto' },
@@ -44,7 +39,7 @@ export class DepositosComponent implements OnInit {
     { id: 11, nombre: 'Noviembre' }, { id: 12, nombre: 'Diciembre' }
   ];
 
-  anios = Array.from({length: 10}, (_, i) => new Date().getFullYear() - i);
+  anios = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i);
   fondos: any[] = [];
   metodosPago = [
     { id: 'transferencia', nombre: 'Transferencia' },
@@ -53,14 +48,12 @@ export class DepositosComponent implements OnInit {
     { id: 'tarjeta', nombre: 'Tarjeta' }
   ];
 
-  // Totales
   totalCOP = 0;
   totalUSD = 0;
 
-  // Control de edición
   editandoDetalleId: number | null = null;
 
-  private apiUrl = `${environment.apiUrl}/api/depositos`;
+  private apiUrl = `${environment.apiUrl}/api/deposito`;
 
   constructor(private http: HttpClient) {}
 
@@ -76,22 +69,25 @@ export class DepositosComponent implements OnInit {
   }
 
   agregarDetalle() {
+    if (!this.detalle.fondoId) {
+      alert('Debe seleccionar un fondo');
+      return;
+    }
+
     if (this.editandoDetalleId !== null) {
-      // Actualizar detalle existente
-      this.detalles[this.editandoDetalleId] = {...this.detalle};
+      this.detalles[this.editandoDetalleId] = { ...this.detalle };
       this.editandoDetalleId = null;
     } else {
-      // Agregar nuevo detalle
-      this.detalles.push({...this.detalle});
+      this.detalles.push({ ...this.detalle });
     }
-    
+
     this.calcularTotales();
     this.limpiarFormularioDetalle();
   }
 
   editarDetalle(index: number) {
     this.editandoDetalleId = index;
-    this.detalle = {...this.detalles[index]};
+    this.detalle = { ...this.detalles[index] };
   }
 
   eliminarDetalle(index: number) {

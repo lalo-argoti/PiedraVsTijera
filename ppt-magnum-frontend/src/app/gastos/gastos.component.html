@@ -94,8 +94,19 @@
     </label>
   </div>
 
-  <div>
-    <button type="submit" [disabled]="!gastoForm.form.valid">{{ editandoId ? 'Actualizar' : 'Agregar' }}</button>
-    <button type="button" (click)="cancelarEdicion()" *ngIf="editandoId">Cancelar</button>
-  </div>
+<div class="btn-group">
+  <button 
+    type="submit" 
+    class="btn btn-primary" 
+    [disabled]="!gastoForm.form.valid">
+    {{ editandoId ? 'Actualizar' : 'Agregar' }}
+  </button>
+  <button 
+    type="button" 
+    class="btn btn-cancel" 
+    (click)="cancelarEdicion()" 
+    *ngIf="editandoId">
+    Cancelar
+  </button>
+</div>
 </form>
