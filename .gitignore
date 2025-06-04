@@ -18,3 +18,30 @@ obj/
 
 # Otros archivos temporales o IDEs
 .vs/
+
+# Backend
+ppt-magnum-backend/CarteraVirtual/appsettings.json
+ppt-magnum-backend/CarteraVirtual/bin/
+ppt-magnum-backend/CarteraVirtual/obj/
+
+# Frontend
+ppt-magnum-frontend/src/environments/environment.ts
+ppt-magnum-frontend/src/environments/environment.prod.ts
+ppt-magnum-frontend/.angular/cache/
+ppt-magnum-frontend/node_modules/
+ppt-magnum-frontend/proxy.conf.json
+
+# Archivos temporales del editor
+*.swp
+*.kate-swp
+*.tmp
+*.log
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Carpetas generales
+dist/
+build/
+
