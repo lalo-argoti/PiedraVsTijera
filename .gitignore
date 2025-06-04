@@ -7,3 +7,14 @@ ppt-magnum-backend/CarteraVirtual/appsettings.json
 ppt-magnum-backend/CarteraVirtual/Program.cs
 
 
+
+# Archivos y carpetas de compilación de .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.log
+
+# Otros archivos temporales o IDEs
+.vs/

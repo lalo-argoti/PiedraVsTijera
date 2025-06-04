@@ -68,6 +68,7 @@ export class FondoMonetarioComponent implements OnInit {
 
   onSubmit() {
     const fondo = {
+      id: parseInt(this.codigoGenerado.replace('FM-', '')), 
       nombre: this.nombre,
       tipo: this.tipo,
       capitalCOP: this.capitalCOP,
