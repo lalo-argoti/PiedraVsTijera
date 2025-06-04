@@ -12,11 +12,13 @@ namespace pdt.Models
         [ForeignKey("GastoRegistroId")]
         public GastoRegistro? GastoRegistro { get; set; }
 
-        [Column("TipoGasto")]
+        [Column("GastoTipoId")]
         public int GastoTipoId { get; set; }
 
         public GastoTipo? TipoGasto { get; set; }
 
-        public decimal Monto { get; set; }
+        public decimal MontoCOP { get; set; }
+
+        public decimal MontoUSD { get; set; }
     }
 }

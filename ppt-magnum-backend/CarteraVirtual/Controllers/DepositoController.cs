@@ -34,10 +34,54 @@ namespace pdt.Controllers
 
         // POST: api/DepositoController
         [HttpPost]
-        public IActionResult Create([FromBody] object model)
+        public IActionResult Create([FromBody] DepositoTransaccionDto transaccion)
         {
-            // TODO: Implementar lógica para crear un registro
-            return CreatedAtAction(nameof(GetById), new { id = 0 }, model);
+            if (transaccion.Detalles == null || transaccion.Detalles.Count == 0)
+            {
+                return BadRequest("Debe proporcionar al menos un detalle de depósito.");
+            }
+
+            foreach (var detalle in transaccion.Detalles)
+            {
+                if (detalle.MontoCOP > 0)
+                {
+                    var depositoCop = new Deposito
+                    {
+                        Fecha = transaccion.Encabezado.Fecha,
+                        FondoId = detalle.FondoId,
+                        Monto = detalle.MontoCOP
+                    };
+                    _context.Depositos.Add(depositoCop);
+
+                    // Actualiza el capital en COP
+                    var fondo = _context.FondosMonetarios.FirstOrDefault(f => f.Id == detalle.FondoId);
+                    if (fondo != null)
+                    {
+                        fondo.CapitalCOP += detalle.MontoCOP;
+                    }
+                }
+
+                if (detalle.MontoUSD > 0)
+                {
+                    var depositoUsd = new Deposito
+                    {
+                        Fecha = transaccion.Encabezado.Fecha,
+                        FondoId = detalle.FondoId,
+                        Monto = detalle.MontoUSD
+                    };
+                    _context.Depositos.Add(depositoUsd);
+
+                    // Actualiza el capital en USD
+                    var fondo = _context.FondosMonetarios.FirstOrDefault(f => f.Id == detalle.FondoId);
+                    if (fondo != null)
+                    {
+                        fondo.CapitalUSD += detalle.MontoUSD;
+                    }
+                }
+            }
+
+            _context.SaveChanges();
+            return Ok(new { message = "Depósito registrado exitosamente" });
         }
 
         // PUT: api/DepositoController/5

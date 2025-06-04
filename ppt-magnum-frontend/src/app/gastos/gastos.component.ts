@@ -39,18 +39,17 @@ export class GastosComponent implements OnInit {
 
   nuevoGasto = {
     fecha: new Date().toISOString().split('T')[0],
-    tipoGastoId: '',
-    fondoId: '',
+    tipoGastoId: 0,
+    fondoId: 0,
     montoCOP: 0,
     montoUSD: 0,
     descripcion: ''
   };
-
   totalGastadoCOP = 0;
   totalGastadoUSD = 0;
   editandoId: number | null = null;
 
-  private apiUrl = `${environment.apiUrl}/api/gastos`;
+  private apiUrl = `${environment.apiUrl}/api/gastoregistro`;
   private initUrl = `${environment.apiUrl}/api/presupuestomovimiento/init`;
 
   constructor(private http: HttpClient) {}
@@ -76,13 +75,14 @@ export class GastosComponent implements OnInit {
       anio: this.anioSeleccionado.toString()
     };
 
-    this.http.get<any[]>(this.apiUrl, { params }).subscribe({
-      next: (data) => {
-        this.gastos = data;
-        this.calcularTotales();
-      },
-      error: (err) => console.error('Error al cargar gastos', err)
-    });
+this.http.get<any[]>(`${this.apiUrl}`, { params }).subscribe({
+  next: (data) => {
+    this.gastos = data;
+    this.calcularTotales();
+  },
+  error: (err) => console.error('Error al cargar gastos', err)
+});
+
   }
 
   calcularTotales() {
@@ -91,36 +91,74 @@ export class GastosComponent implements OnInit {
   }
 
   onSubmit() {
-    const gastoData = {
-      ...this.nuevoGasto,
-      mes: this.mesSeleccionado,
-      anio: this.anioSeleccionado
+    const gasto: any = {
+      fecha: this.nuevoGasto.fecha,
+      fondoId: Number(this.nuevoGasto.fondoId),
+      observaciones: this.nuevoGasto.descripcion || '',
+      detalles: [
+        {
+          gastoTipoId: Number(this.nuevoGasto.tipoGastoId),
+          montoCOP: Number(this.nuevoGasto.montoCOP),
+          montoUSD: Number(this.nuevoGasto.montoUSD)
+        }
+      ]
     };
 
-    if (this.editandoId !== null) {
-      this.actualizarGasto(gastoData);
+    if (this.editandoId) {
+      this.actualizarGasto(gasto);
     } else {
-      this.crearGasto(gastoData);
+      this.crearGasto(gasto);
     }
   }
 
   private crearGasto(gastoData: any) {
-    this.http.post(this.apiUrl, gastoData).subscribe({
+    const payload = {
+      fecha: gastoData.fecha,
+      observaciones: gastoData.observaciones || '',
+      fondoId: Number(gastoData.fondoId),
+      detalles: [
+        {
+          gastoTipoId: Number(gastoData.detalles[0].gastoTipoId),
+          montoCOP: Number(gastoData.detalles[0].montoCOP),
+          montoUSD: Number(gastoData.detalles[0].montoUSD)
+        }
+      ]
+    };
+
+    this.http.post(this.apiUrl, payload).subscribe({
       next: () => {
         this.cargarGastos();
         this.limpiarFormulario();
       },
-      error: (err) => console.error('Error al crear gasto', err)
+      error: (err) => {
+        console.error('❌ Error al crear gasto', err, payload);
+        alert(err.error?.mensaje || 'Error desconocido al guardar');
+      }
     });
   }
 
   private actualizarGasto(gastoData: any) {
-    this.http.put(`${this.apiUrl}/${this.editandoId}`, gastoData).subscribe({
+    const gastoRegistroDto = {
+      fecha: gastoData.fecha,
+      observaciones: gastoData.descripcion || gastoData.observaciones || '',
+      criterio: 'manual',
+      fondoId: Number(gastoData.fondoId),
+      detalles: [
+        {
+          gastoTipoId: Number(gastoData.tipoGastoId || gastoData.detalles?.[0]?.gastoTipoId),
+          montoCOP: Number(gastoData.montoCOP || gastoData.detalles?.[0]?.montoCOP),
+          montoUSD: Number(gastoData.montoUSD || gastoData.detalles?.[0]?.montoUSD)
+        }
+      ]
+    };
+
+    this.http.put(`${this.apiUrl}/${this.editandoId}`, gastoRegistroDto).subscribe({
       next: () => {
         this.cargarGastos();
         this.limpiarFormulario();
+        this.editandoId = null;
       },
-      error: (err) => console.error('Error al actualizar gasto', err)
+      error: (err) => console.error('Error al actualizar gasto', err, gastoRegistroDto)
     });
   }
 
@@ -128,11 +166,11 @@ export class GastosComponent implements OnInit {
     this.editandoId = gasto.id;
     this.nuevoGasto = {
       fecha: gasto.fecha.split('T')[0],
-      tipoGastoId: gasto.tipoGastoId,
-      fondoId: gasto.fondoId,
-      montoCOP: gasto.montoCOP,
-      montoUSD: gasto.montoUSD,
-      descripcion: gasto.descripcion
+      tipoGastoId: gasto.detalles?.[0]?.gastoTipoId || gasto.tipoGastoId || 0,
+      fondoId: gasto.fondoId || 0,
+      montoCOP: gasto.detalles?.[0]?.montoCOP || gasto.montoCOP || 0,
+      montoUSD: gasto.detalles?.[0]?.montoUSD || gasto.montoUSD || 0,
+      descripcion: gasto.observaciones || gasto.descripcion || ''
     };
   }
 
@@ -153,8 +191,8 @@ export class GastosComponent implements OnInit {
   limpiarFormulario() {
     this.nuevoGasto = {
       fecha: new Date().toISOString().split('T')[0],
-      tipoGastoId: '',
-      fondoId: '',
+      tipoGastoId: 0,
+      fondoId: 0,
       montoCOP: 0,
       montoUSD: 0,
       descripcion: ''

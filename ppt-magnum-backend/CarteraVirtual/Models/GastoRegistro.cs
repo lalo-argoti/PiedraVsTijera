@@ -16,7 +16,7 @@ namespace pdt.Models
         public string Criterio { get; set; } = string.Empty;
 
         [Column("propietario")]
-        public string? Propietario { get; set; }
+        public int Propietario { get; set; }
 
         public FondoMonetario? Fondo { get; set; }
 

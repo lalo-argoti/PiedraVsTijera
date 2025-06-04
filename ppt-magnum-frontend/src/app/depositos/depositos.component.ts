@@ -4,6 +4,27 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 
+interface DepositoEncabezado {
+  fecha: string;
+  descripcion: string;
+  mes: number;
+  anio: number;
+  referencia: string;
+}
+
+interface DepositoDetalle {
+  fondoId: number;
+  montoCOP: number;
+  montoUSD: number;
+  metodoPago: string;
+  referenciaPago: string;
+}
+
+interface DepositoTransaccion {
+  encabezado: DepositoEncabezado;
+  detalles: DepositoDetalle[];
+}
+
 @Component({
   selector: 'app-depositos',
   standalone: true,
@@ -12,7 +33,7 @@ import { environment } from '../../environments/environment';
   styleUrls: ['./depositos.component.css']
 })
 export class DepositosComponent implements OnInit {
-  encabezado = {
+  encabezado: DepositoEncabezado = {
     fecha: new Date().toISOString().split('T')[0],
     descripcion: '',
     mes: new Date().getMonth() + 1,
@@ -20,15 +41,15 @@ export class DepositosComponent implements OnInit {
     referencia: ''
   };
 
-  detalle = {
-    fondoId: '',
+  detalle: DepositoDetalle = {
+    fondoId: 0,
     montoCOP: 0,
     montoUSD: 0,
     metodoPago: 'transferencia',
     referenciaPago: ''
   };
 
-  detalles: any[] = [];
+  detalles: DepositoDetalle[] = [];
 
   meses = [
     { id: 1, nombre: 'Enero' }, { id: 2, nombre: 'Febrero' },
@@ -62,15 +83,25 @@ export class DepositosComponent implements OnInit {
   }
 
   cargarDatosIniciales() {
-    this.http.get<any[]>(`${environment.apiUrl}/api/fondos`).subscribe({
-      next: (data) => this.fondos = data,
-      error: (err) => console.error('Error al cargar fondos', err)
-    });
-  }
+  const initUrl = `${environment.apiUrl}/api/presupuestomovimiento/init`;
+  this.http.get<any>(initUrl).subscribe({
+    next: (data) => {
+      this.fondos = data.fondos;
+      // Si en el futuro necesitas tiposGasto, también estarán disponibles aquí
+    },
+    error: (err) => console.error('Error al cargar datos iniciales', err)
+  });
+}
+
 
   agregarDetalle() {
-    if (!this.detalle.fondoId) {
+    if (!this.detalle.fondoId || this.detalle.fondoId === 0) {
       alert('Debe seleccionar un fondo');
+      return;
+    }
+
+    if (this.detalle.montoCOP <= 0 && this.detalle.montoUSD <= 0) {
+      alert('Debe ingresar al menos un monto en COP o USD');
       return;
     }
 
@@ -102,7 +133,7 @@ export class DepositosComponent implements OnInit {
 
   limpiarFormularioDetalle() {
     this.detalle = {
-      fondoId: '',
+      fondoId: 0,
       montoCOP: 0,
       montoUSD: 0,
       metodoPago: 'transferencia',
@@ -121,7 +152,7 @@ export class DepositosComponent implements OnInit {
       return;
     }
 
-    const transaccion = {
+    const transaccion: DepositoTransaccion = {
       encabezado: this.encabezado,
       detalles: this.detalles
     };

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using pdt.Models;
 using pdt.Data;
+using System.Security.Claims;
 
 namespace pdt.Controllers
 {
@@ -14,41 +15,109 @@ namespace pdt.Controllers
         {
             _context = context;
         }
+//----------------------------------------------------------        
+        [HttpGet("{id}")]
+        public IActionResult GetById(int id)
+        {
+            try
+            {
+                var detalles = _context.GastosDetalles
+                    .Where(d => d.GastoRegistroId == id)
+                    .ToList();
 
+                if (!detalles.Any())
+                    return NotFound(new { mensaje = "No se encontraron detalles para ese registro." });
+
+                return Ok(detalles);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { mensaje = "Error al obtener los datos", error = ex.Message });
+            }
+        }
+//----------------------------------------------------------        
+
+        [HttpGet]
+        public IActionResult GetByMesAnio([FromQuery] int mes, [FromQuery] int anio)
+        {
+            try
+            {
+                int propietario = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value ?? "0");
+
+                var registros = _context.GastosRegistros
+                    .Where(g => g.Propietario == propietario && g.Fecha.Month == mes && g.Fecha.Year == anio)
+                    .ToList();
+
+                return Ok(registros);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { mensaje = "Error al obtener registros", error = ex.Message });
+            }
+        }
+ 
+//----------------------------------------------------------
+          
         [HttpPost]
         public IActionResult Create([FromBody] GastoRegistroDto model)
         {
             try
             {
+                int propietario = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value ?? "0");
+
                 var registro = new GastoRegistro
                 {
+                    Propietario = propietario,
                     Fecha = model.Fecha,
                     Observaciones = model.Observaciones,
-                    Criterio = model.Criterio,
-                    Propietario = model.Propietario,
-                    FondoId = model.FondoId
+                    FondoId = model.FondoId,
+                    Criterio = "default"
                 };
 
                 _context.GastosRegistros.Add(registro);
                 _context.SaveChanges();
 
-                foreach (var detalle in model.Detalles)
+                foreach (var detalleDto in model.Detalles)
                 {
-                    _context.GastosDetalles.Add(new GastoDetalle
+                    var detalle = new GastoDetalle
                     {
                         GastoRegistroId = registro.Id,
-                        GastoTipoId = detalle.GastoTipoId,
-                        Monto = detalle.Monto
-                    });
+                        GastoTipoId = detalleDto.GastoTipoId,
+                        MontoCOP = detalleDto.MontoCOP,
+                        MontoUSD = detalleDto.MontoUSD
+                    };
+
+                    _context.GastosDetalles.Add(detalle);
                 }
 
                 _context.SaveChanges();
-                return CreatedAtAction(nameof(Create), new { id = registro.Id }, registro);
+
+                var responseDto = new GastoRegistroDto
+                {
+                    Fecha = registro.Fecha,
+                    FondoId = registro.FondoId,
+                    Observaciones = registro.Observaciones,
+                    Detalles = model.Detalles
+                };
+
+                return CreatedAtAction(nameof(Create), new { id = registro.Id }, responseDto);
             }
             catch (Exception ex)
             {
                 return BadRequest(new { mensaje = "Error al guardar", error = ex.Message });
             }
+        }
+
+        private int GenerateCustomId(int userId, DateTime fecha)
+        {
+            string baseId = "1";
+            string userIdStr = userId.ToString().PadLeft(2, '0');
+            string fechaStr = fecha.ToString("yyMMdd");
+            Random rnd = new Random();
+            string randomStr = rnd.Next(10, 99).ToString();
+            string idStr = baseId + userIdStr + fechaStr + randomStr;
+
+            return int.Parse(idStr);
         }
     }
 }
