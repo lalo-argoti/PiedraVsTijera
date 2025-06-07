@@ -15,7 +15,7 @@
 </div>
 
 
-nota de desarrollo
+<p style="color: gray;">[debug] editandoId: {{ editandoId }}</p>
 
 <table class="tabla-gastos" border="1" cellpadding="5" cellspacing="0">
   <thead>
@@ -37,10 +37,10 @@ nota de desarrollo
       <td>{{ gasto.detalles?.[0]?.montoCOP | number:'1.2-2' }}</td>
       <td>{{ gasto.detalles?.[0]?.montoUSD | number:'1.2-2' }}</td>
       <td>{{ gasto.observaciones }}</td>
-      <td>
-        <button (click)="editarGasto(gasto)">Editar</button>
-        <button (click)="eliminarGasto(gasto.id)">Eliminar</button>
-      </td>
+<td>
+  <button (click)="editarGasto(gasto)">Editar</button>
+  <button (click)="eliminarGasto(gasto.id)">Eliminar</button>
+</td>
     </tr>
   </tbody>
   <tfoot>
@@ -53,7 +53,7 @@ nota de desarrollo
   </tfoot>
 </table>
 
-<h3>{{ editandoId ? 'Editar Gasto' : 'Nuevo Gasto' }}</h3>
+<p *ngIf="editandoId">Editando gasto con ID: {{ editandoId }}</p>
 <form (ngSubmit)="onSubmit()" #gastoForm="ngForm" autocomplete="off">
 
   <div>

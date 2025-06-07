@@ -2,6 +2,9 @@ namespace pdt.Models.DTO
 {
     public class GastoResumenMensualDto
     {
+        public int Id { get; set; }  
+
+        
         public DateTime Fecha { get; set; }
 
         public int FondoId { get; set; }

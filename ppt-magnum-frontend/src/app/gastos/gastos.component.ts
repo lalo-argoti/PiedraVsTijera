@@ -152,33 +152,44 @@ this.http.get<any[]>(`${this.apiUrl}`, { params }).subscribe({
     });
   }
 
-  private actualizarGasto(gastoData: any) {
-    const gastoRegistroDto = {
-      fecha: gastoData.fecha,
-      observaciones: gastoData.descripcion || gastoData.observaciones || '',
-      criterio: 'manual',
-      fondoId: Number(gastoData.fondoId),
-      detalles: [
-        {
-          gastoTipoId: Number(gastoData.tipoGastoId || gastoData.detalles?.[0]?.gastoTipoId),
-          montoCOP: Number(gastoData.montoCOP || gastoData.detalles?.[0]?.montoCOP),
-          montoUSD: Number(gastoData.montoUSD || gastoData.detalles?.[0]?.montoUSD)
-        }
-      ]
-    };
+actualizarGasto(gastoData: any) {
+  const gastoRegistroDto = {
+    fecha: gastoData.fecha,
+    observaciones: gastoData.descripcion || '', // Evita undefined
+    fondoId: Number(gastoData.fondoId),
+    criterio: 'manual',
+    detalles: [
+      {
+        gastoTipoId: Number(gastoData.tipoGastoId) || 0, // Protege contra NaN
+        montoCOP: Number(gastoData.montoCOP) || 0,
+        montoUSD: Number(gastoData.montoUSD) || 0
+      }
+    ]
+  };
+  console.log('➡️ Payload PUT:', gastoRegistroDto);
 
-    this.http.put(`${this.apiUrl}/${this.editandoId}`, gastoRegistroDto).subscribe({
-      next: () => {
-        this.cargarGastos();
-        this.limpiarFormulario();
-        this.editandoId = null;
-      },
-      error: (err) => console.error('Error al actualizar gasto', err, gastoRegistroDto)
-    });
-  }
+  this.http.put(`${this.apiUrl}/${this.editandoId}`, gastoRegistroDto).subscribe({
+    next: () => {
+      alert('Actualizado correctamente');
+      this.editandoId = null;
+      this.cargarGastos();
+      this.limpiarFormulario();
+    },
+    error: (err) => {
+      console.error('Error al actualizar gasto', err);
+      alert(err.error?.mensaje || 'Error al actualizar');
+    }
+  });
+}
 
   editarGasto(gasto: any) {
+    console.log('🛠 Editando gasto recibido:', gasto); // 👈 Agregado para depurar
+ 
     this.editandoId = gasto.id;
+    console.log('🛠 Editando gasto recibido:',  this.editandoId); // 👈 Agregado para depurar
+
+    const detalle = gasto.detalles?.[0] || {};
+
     this.nuevoGasto = {
       fecha: gasto.fecha.split('T')[0],
       tipoGastoId: gasto.detalles?.[0]?.gastoTipoId || gasto.tipoGastoId || 0,

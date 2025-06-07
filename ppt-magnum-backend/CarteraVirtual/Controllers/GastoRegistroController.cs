@@ -57,7 +57,7 @@ var gastos = _context.GastosRegistros
     .ToList();
 
 var resultado = gastos.Select(g => new GastoResumenMensualDto
-{
+{   Id=g.Id   ,
     Fecha = g.Fecha,
     FondoId = g.FondoId,
     Observaciones = g.Observaciones ?? string.Empty,
@@ -134,6 +134,64 @@ return Ok(resultado);
             }
         }
 
+        
+        [HttpPut("{id}")]
+public IActionResult Update(int id, [FromBody] GastoRegistroDto model)
+{
+    try
+    {
+        int propietario = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value ?? "0");
+
+        var registro = _context.GastosRegistros
+            .Include(r => r.Detalles)
+            .FirstOrDefault(r => r.Id == id && r.Propietario == propietario);
+
+        if (registro == null)
+        {
+            return NotFound(new { mensaje = "Registro no encontrado" });
+        }
+
+        // Actualizar datos principales
+        registro.Fecha = model.Fecha;
+        registro.Observaciones = model.Observaciones;
+        registro.FondoId = model.FondoId;
+        registro.Criterio = "manual";
+
+        // Eliminar detalles anteriores
+        _context.GastosDetalles.RemoveRange(registro.Detalles);
+
+        // Agregar nuevos detalles
+        foreach (var detalleDto in model.Detalles)
+        {
+            var detalle = new GastoDetalle
+            {
+                GastoRegistroId = registro.Id,
+                GastoTipoId = detalleDto.GastoTipoId,
+                MontoCOP = detalleDto.MontoCOP,
+                MontoUSD = detalleDto.MontoUSD
+            };
+            _context.GastosDetalles.Add(detalle);
+        }
+
+        _context.SaveChanges();
+
+        var responseDto = new GastoRegistroDto
+        {
+            Fecha = registro.Fecha,
+            FondoId = registro.FondoId,
+            Observaciones = registro.Observaciones,
+            Detalles = model.Detalles
+        };
+
+        return Ok(responseDto);
+    }
+    catch (Exception ex)
+    {
+        return BadRequest(new { mensaje = "Error al actualizar", error = ex.Message });
+    }
+}
+        
+        
         private int GenerateCustomId(int userId, DateTime fecha)
         {
             string baseId = "1";
