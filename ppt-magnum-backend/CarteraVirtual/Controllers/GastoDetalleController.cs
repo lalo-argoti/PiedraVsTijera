@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 
 using Microsoft.AspNetCore.Mvc;
 using pdt.Models;
@@ -25,24 +26,39 @@ namespace pdt.Controllers
         }
         
         
-        [HttpGet("por-fecha")]
-        public IActionResult GetByMesAnio([FromQuery] int mes, [FromQuery] int anio)
+   [HttpGet("por-fecha")]
+public IActionResult GetByMesAnio([FromQuery] int mes, [FromQuery] int anio)
+{
+    try
+    {
+        int propietario = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value ?? "0");
+
+var registros = _context.GastosRegistros
+    .Where(g => g.Propietario == propietario && 
+                g.Fecha.Month == mes && 
+                g.Fecha.Year == anio)
+    .Include(g => g.Detalles)  // <- aquí cargas los detalles
+    .Select(g => new GastoRegistroDto
+    {
+        Fecha = g.Fecha,
+        FondoId = g.FondoId,
+        Observaciones = g.Observaciones,
+        Detalles = g.Detalles.Select(d => new GastoDetalleDto
         {
-            try
-            {
-                int propietario = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value ?? "0");
+            GastoTipoId = d.GastoTipoId,
+            MontoCOP = d.MontoCOP,
+            MontoUSD = d.MontoUSD
+        }).ToList()
+    })
+    .ToList();
 
-                var registros = _context.GastosRegistros
-                    .Where(g => g.Propietario == propietario && g.Fecha.Month == mes && g.Fecha.Year == anio)
-                    .ToList();
-
-                return Ok(registros);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { mensaje = "Error al obtener registros", error = ex.Message });
-            }
-        }
+        return Ok(registros);
+    }
+    catch (Exception ex)
+    {
+        return BadRequest(new { mensaje = "Error al obtener registros", error = ex.Message });
+    }
+}
         
         // GET: api/GastoDetalleController/5
         [HttpGet("{id}")]

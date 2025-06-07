@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace pdt.Models
 {
@@ -20,6 +22,9 @@ namespace pdt.Models
 
         public FondoMonetario? Fondo { get; set; }
 
-        public ICollection<GastoDetalle>? Detalles { get; set; }
+        [InverseProperty("GastoRegistro")]  // ← Esta es la adición segura
+
+        
+        public ICollection<GastoDetalle> Detalles { get; set; } = new List<GastoDetalle>();
     }
 }

@@ -58,16 +58,23 @@ export class GastosComponent implements OnInit {
     this.cargarDatosIniciales();
     this.cargarGastos();
   }
-
-  cargarDatosIniciales() {
+  
+cargarDatosIniciales(): Promise<void> {
+  console.log("Se vana a cargar desde:", this.initUrl);
+  return new Promise((resolve, reject) => {
     this.http.get<any>(this.initUrl).subscribe({
       next: (data) => {
         this.fondos = data.fondos;
         this.tiposGasto = data.tiposGasto;
+        resolve();
       },
-      error: (err) => console.error('Error al cargar datos iniciales', err)
+      error: (err) => {
+        console.error('Error al cargar datos iniciales', err);
+        reject(err);
+      }
     });
-  }
+  });
+}
 
   cargarGastos() {
     const params = {
@@ -79,7 +86,12 @@ this.http.get<any[]>(`${this.apiUrl}`, { params }).subscribe({
   next: (data) => {
     this.gastos = data;
     this.calcularTotales();
+      console.log('📡 Llamado a:', `${this.apiUrl}`, { params });  // 👈 Aquí se muestra la URL en consola
+
+    console.log(data)
+    
   },
+  
   error: (err) => console.error('Error al cargar gastos', err)
 });
 
@@ -124,11 +136,14 @@ this.http.get<any[]>(`${this.apiUrl}`, { params }).subscribe({
         }
       ]
     };
+    console.log("enviando a la url" , this.apiUrl);
+    console.log('📤 Payload enviado al backend:', payload);
 
     this.http.post(this.apiUrl, payload).subscribe({
       next: () => {
         this.cargarGastos();
         this.limpiarFormulario();
+      
       },
       error: (err) => {
         console.error('❌ Error al crear gasto', err, payload);

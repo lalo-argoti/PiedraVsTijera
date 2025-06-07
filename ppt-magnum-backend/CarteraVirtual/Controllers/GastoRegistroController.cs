@@ -1,10 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
-using pdt.Models;
 using pdt.Data;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;  
+
+using pdt.Models.DTO;
+using pdt.Models;
+
+
+
 
 namespace pdt.Controllers
 {
+
     [ApiController]
     [Route("api/[controller]")]
     public class GastoRegistroController : ControllerBase
@@ -37,30 +44,49 @@ namespace pdt.Controllers
         }
 //----------------------------------------------------------        
 
-        [HttpGet]
-        public IActionResult GetByMesAnio([FromQuery] int mes, [FromQuery] int anio)
-        {
-            try
-            {
-                int propietario = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value ?? "0");
+ [HttpGet]
+public IActionResult GetByMesAnio([FromQuery] int mes, [FromQuery] int anio)
+{
+    try
+    {
+        int propietario = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value ?? "0");
 
-                var registros = _context.GastosRegistros
-                    .Where(g => g.Propietario == propietario && g.Fecha.Month == mes && g.Fecha.Year == anio)
-                    .ToList();
+var gastos = _context.GastosRegistros
+    .Where(g => g.Propietario == propietario && g.Fecha.Month == mes && g.Fecha.Year == anio)
+    .Include(g => g.Detalles) // Solo los detalles necesarios, sin .ThenInclude
+    .ToList();
 
-                return Ok(registros);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { mensaje = "Error al obtener registros", error = ex.Message });
-            }
-        }
+var resultado = gastos.Select(g => new GastoResumenMensualDto
+{
+    Fecha = g.Fecha,
+    FondoId = g.FondoId,
+    Observaciones = g.Observaciones ?? string.Empty,
+    Detalles = g.Detalles.Select(d => new GastoDetalle2Dto
+    {
+        Id = d.Id,
+        GastoRegistroId = d.GastoRegistroId,
+        GastoTipoId = d.GastoTipoId,
+        MontoCOP = d.MontoCOP,
+        MontoUSD = d.MontoUSD
+    }).ToList()
+}).ToList();
+
+return Ok(resultado);
+
+    }
+    catch (Exception ex)
+    {
+        return BadRequest(new { mensaje = "Error al obtener registros", error = ex.Message });
+    }
+}
+
  
 //----------------------------------------------------------
           
         [HttpPost]
         public IActionResult Create([FromBody] GastoRegistroDto model)
         {
+
             try
             {
                 int propietario = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value ?? "0");

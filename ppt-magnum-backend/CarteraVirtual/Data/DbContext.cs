@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using pdt.Models;
+using pdt.Models.DTO;
 
 namespace pdt.Data
 {
@@ -19,6 +20,8 @@ namespace pdt.Data
         public DbSet<GastoRegistro> GastosRegistros { get; set; }
         public DbSet<GastoDetalle> GastosDetalles { get; set; }
         public DbSet<Deposito> Depositos { get; set; }
+        public DbSet<GastoRegistroPlanoDto> GastoRegistroPlanoDtos { get; set; }
+    public List<GastoDetalle2Dto> Detalles { get; set; } = new();  // <--- cambio aquí
 
  protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
@@ -32,6 +35,7 @@ namespace pdt.Data
     modelBuilder.Entity<GastoRegistro>().ToTable("pdt_gastos_registro");
     modelBuilder.Entity<GastoDetalle>().ToTable("pdt_gasto_detalle");
     modelBuilder.Entity<Deposito>().ToTable("pdt_depositos");
+    modelBuilder.Entity<GastoRegistroPlanoDto>().HasNoKey(); // <- Esto resuelve el error
 
     // Relaciones
     
@@ -43,7 +47,13 @@ namespace pdt.Data
 
     modelBuilder.Entity<GastoRegistro>(entity =>
     {
-        entity.Property(e => e.Id).ValueGeneratedOnAdd();
+        entity.Property(e => e.Id).ValueGeneratedOnAdd(); // Mantiene tu configuración original
+        
+        // Agrega la configuración de la relación
+        entity.HasMany(g => g.Detalles)
+              .WithOne(d => d.GastoRegistro)
+              .HasForeignKey(d => d.GastoRegistroId)
+              .OnDelete(DeleteBehavior.Cascade); // Opcional: define comportamiento de borrado
     });
     
     modelBuilder.Entity<User>()

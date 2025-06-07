@@ -14,11 +14,14 @@
   </label>
 </div>
 
+
+nota de desarrollo
+
 <table class="tabla-gastos" border="1" cellpadding="5" cellspacing="0">
   <thead>
     <tr>
       <th>Fecha</th>
-      <th>Tipo Gasto</th>
+      <th>Tipo de Gasto</th>
       <th>Fondo</th>
       <th>Monto COP</th>
       <th>Monto USD</th>
@@ -29,10 +32,10 @@
   <tbody>
     <tr *ngFor="let gasto of gastos">
       <td>{{ gasto.fecha | date:'yyyy-MM-dd' }}</td>
-      <td>{{ getNombreTipoGasto(gasto.detalles?.[0]?.gastoTipoId || gasto.tipoGastoId) }}</td>
-      <td>{{ getNombreFondo(gasto.fondoId) }}</td>
-      <td>{{ gasto.detalles?.[0]?.monto || gasto.montoCOP | number:'1.2-2' }}</td>
-      <td>{{ gasto.montoUSD | number:'1.2-2' }}</td>
+<td>{{ getNombreTipoGasto(gasto.detalles?.[0]?.gastoTipoId || gasto.tipoGastoId) }}</td>
+<td>{{ getNombreFondo(gasto.fondoId) }}</td>
+      <td>{{ gasto.detalles?.[0]?.montoCOP | number:'1.2-2' }}</td>
+      <td>{{ gasto.detalles?.[0]?.montoUSD | number:'1.2-2' }}</td>
       <td>{{ gasto.observaciones }}</td>
       <td>
         <button (click)="editarGasto(gasto)">Editar</button>
