@@ -25,6 +25,7 @@ export class GastosComponent implements OnInit {
   fondos: FondoMonetarioDto[] = [];
   tiposGasto: GastoTipoDto[] = [];
   gastos: any[] = [];
+  editandoDetalleId: number | null = null;
 
   meses = [
     { id: 1, nombre: 'Enero' }, { id: 2, nombre: 'Febrero' }, { id: 3, nombre: 'Marzo' },
@@ -43,7 +44,9 @@ export class GastosComponent implements OnInit {
     fondoId: 0,
     montoCOP: 0,
     montoUSD: 0,
-    descripcion: ''
+    descripcion: '',
+    detalleId: null,           // 🆕 nuevo
+    gastoRegistroId: null      // 🆕 nuevo
   };
   totalGastadoCOP = 0;
   totalGastadoUSD = 0;
@@ -130,6 +133,7 @@ this.http.get<any[]>(`${this.apiUrl}`, { params }).subscribe({
       fondoId: Number(gastoData.fondoId),
       detalles: [
         {
+           id: this.editandoDetalleId, //  
           gastoTipoId: Number(gastoData.detalles[0].gastoTipoId),
           montoCOP: Number(gastoData.detalles[0].montoCOP),
           montoUSD: Number(gastoData.detalles[0].montoUSD)
@@ -152,53 +156,63 @@ this.http.get<any[]>(`${this.apiUrl}`, { params }).subscribe({
     });
   }
 
-actualizarGasto(gastoData: any) {
+actualizarGasto(_: any) {
   const gastoRegistroDto = {
-    fecha: gastoData.fecha,
-    observaciones: gastoData.descripcion || '', // Evita undefined
-    fondoId: Number(gastoData.fondoId),
+    id: this.nuevoGasto.gastoRegistroId,
+    fecha: this.nuevoGasto.fecha,
+    observaciones: this.nuevoGasto.descripcion || '',
+    fondoId: Number(this.nuevoGasto.fondoId),
     criterio: 'manual',
     detalles: [
       {
-        gastoTipoId: Number(gastoData.tipoGastoId) || 0, // Protege contra NaN
-        montoCOP: Number(gastoData.montoCOP) || 0,
-        montoUSD: Number(gastoData.montoUSD) || 0
+        id: this.nuevoGasto.detalleId,
+        gastoRegistroId: this.nuevoGasto.gastoRegistroId,
+        gastoTipoId: Number(this.nuevoGasto.tipoGastoId),
+        montoCOP: Number(this.nuevoGasto.montoCOP),
+        montoUSD: Number(this.nuevoGasto.montoUSD)
       }
     ]
   };
-  console.log('➡️ Payload PUT:', gastoRegistroDto);
+    console.log('➡️ Payload PUT:', gastoRegistroDto);
+          alert('Actualizado correctamente');
 
-  this.http.put(`${this.apiUrl}/${this.editandoId}`, gastoRegistroDto).subscribe({
-    next: () => {
-      alert('Actualizado correctamente');
-      this.editandoId = null;
-      this.cargarGastos();
-      this.limpiarFormulario();
-    },
-    error: (err) => {
-      console.error('Error al actualizar gasto', err);
-      alert(err.error?.mensaje || 'Error al actualizar');
+    this.http.put(`${this.apiUrl}/${this.editandoId}`, gastoRegistroDto).subscribe({
+        next: () => {
+        alert('Actualizado correctamente');
+        this.editandoId = null;
+        this.editandoDetalleId = null;  // Limpias el id del detalle también
+        this.cargarGastos();
+        this.limpiarFormulario();
+        },
+        error: (err) => {
+        console.error('Error al actualizar gasto', err);
+        alert(err.error?.mensaje || 'Error al actualizar');
+        }
+    });
     }
-  });
+editarGasto(gasto: any) {
+  const detalle = gasto.detalles?.[0];
+  console.log('Junio72025:',detalle);
+  
+  /*Si ya estan aqui ¿porque no se actualizan?*/
+  /* es decir, ya estan en manos del forntend, */
+  
+  this.editandoId = gasto.id;
+  this.editandoDetalleId = detalle.id || null;
+
+  this.nuevoGasto = {
+    fecha: gasto.fecha?.split('T')[0] || '',
+    tipoGastoId: detalle?.gastoTipoId || 0,
+    fondoId: gasto.fondoId || 0,
+    montoCOP: detalle?.montoCOP || 0,
+    montoUSD: detalle?.montoUSD || 0,
+    descripcion: gasto.observaciones || '',
+    detalleId: detalle?.id || null,           // 🆕
+    gastoRegistroId: gasto.id                 // 🆕
+  };
+
+  console.log('Detalle a editar:', this.editandoDetalleId);
 }
-
-  editarGasto(gasto: any) {
-    console.log('🛠 Editando gasto recibido:', gasto); // 👈 Agregado para depurar
- 
-    this.editandoId = gasto.id;
-    console.log('🛠 Editando gasto recibido:',  this.editandoId); // 👈 Agregado para depurar
-
-    const detalle = gasto.detalles?.[0] || {};
-
-    this.nuevoGasto = {
-      fecha: gasto.fecha.split('T')[0],
-      tipoGastoId: gasto.detalles?.[0]?.gastoTipoId || gasto.tipoGastoId || 0,
-      fondoId: gasto.fondoId || 0,
-      montoCOP: gasto.detalles?.[0]?.montoCOP || gasto.montoCOP || 0,
-      montoUSD: gasto.detalles?.[0]?.montoUSD || gasto.montoUSD || 0,
-      descripcion: gasto.observaciones || gasto.descripcion || ''
-    };
-  }
 
   eliminarGasto(id: number) {
     if (confirm('¿Estás seguro de eliminar este gasto?')) {
@@ -214,17 +228,18 @@ actualizarGasto(gastoData: any) {
     this.limpiarFormulario();
   }
 
-  limpiarFormulario() {
-    this.nuevoGasto = {
-      fecha: new Date().toISOString().split('T')[0],
-      tipoGastoId: 0,
-      fondoId: 0,
-      montoCOP: 0,
-      montoUSD: 0,
-      descripcion: ''
-    };
-  }
-
+limpiarFormulario() {
+  this.nuevoGasto = {
+    fecha: new Date().toISOString().split('T')[0],
+    tipoGastoId: 0,
+    fondoId: 0,
+    montoCOP: 0,
+    montoUSD: 0,
+    descripcion: '',
+    detalleId: null,
+    gastoRegistroId: null
+  };
+}
   cambiarMes() {
     this.cargarGastos();
   }
