@@ -5,6 +5,8 @@ using pdt.Models;
 [Table("pdt_depositos_detalle")]
 public class DepositoDetalle
 {
+    [Key]
+        
     public int Id { get; set; }
 
     public int DepositoId { get; set; }

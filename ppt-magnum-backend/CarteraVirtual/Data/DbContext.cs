@@ -58,6 +58,10 @@ namespace pdt.Data
 
     });
     
+    modelBuilder.Entity<Deposito>()
+    .Property(d => d.Id)
+    .ValueGeneratedOnAdd();  // Indica que se genera al insertar (IDENTITY)
+    
     modelBuilder.Entity<User>()
         .HasOne(u => u.GrupoNavigation)
         .WithMany(g => g.Users)
@@ -94,7 +98,11 @@ namespace pdt.Data
         .Property(p => p.MontoPresupuestado)
         .HasPrecision(18, 2);
 
-    
+    modelBuilder.Entity<Deposito>()
+    .HasMany(d => d.Detalles)
+    .WithOne(det => det.Deposito)
+    .HasForeignKey(det => det.DepositoId)
+    .OnDelete(DeleteBehavior.Cascade);
 }
 
 

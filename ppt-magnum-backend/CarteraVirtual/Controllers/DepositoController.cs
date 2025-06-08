@@ -85,7 +85,8 @@ public IActionResult GetPorMes([FromQuery] int mes, [FromQuery] int anio)
         .ToList();
 
     if (!depositos.Any())
-        return NotFound("No se encontraron depósitos en el mes y año proporcionados para este propietario.");
+        return Ok(new object[] { });
+
 
     var resultado = depositos.Select(deposito => new
     {

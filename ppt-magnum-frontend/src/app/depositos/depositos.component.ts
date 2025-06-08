@@ -215,6 +215,7 @@ ngOnInit() {
       encabezado: this.encabezado,
       detalles: this.detalles
     };
+    console.log(transaccion)
 
     if (this.editandoDepositoId !== null) {
       this.http.put(`${this.apiUrl}/${this.editandoDepositoId}`, transaccion).subscribe({
