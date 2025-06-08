@@ -214,14 +214,14 @@ editarGasto(gasto: any) {
   console.log('Detalle a editar:', this.editandoDetalleId);
 }
 
-  eliminarGasto(id: number) {
-    if (confirm('¿Estás seguro de eliminar este gasto?')) {
-      this.http.delete(`${this.apiUrl}/${id}`).subscribe({
-        next: () => this.cargarGastos(),
-        error: (err) => console.error('Error al eliminar gasto', err)
-      });
-    }
+eliminarGasto(id: number) {
+  if (confirm('¿Estás seguro de eliminar este gasto?')) {
+    this.http.delete(`${this.apiUrl}/${id}`).subscribe({
+      next: () => this.cargarGastos(),
+      error: (err) => console.error('Error al eliminar gasto', err)
+    });
   }
+}
 
   cancelarEdicion() {
     this.editandoId = null;

@@ -21,7 +21,7 @@ namespace pdt.Data
         public DbSet<GastoDetalle> GastosDetalles { get; set; }
         public DbSet<Deposito> Depositos { get; set; }
         public DbSet<GastoRegistroPlanoDto> GastoRegistroPlanoDtos { get; set; }
-    public List<GastoDetalle2Dto> Detalles { get; set; } = new();  // <--- cambio aquí
+        public List<GastoDetalle2Dto> Detalles { get; set; } = new();  
 
  protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
@@ -54,6 +54,8 @@ namespace pdt.Data
               .WithOne(d => d.GastoRegistro)
               .HasForeignKey(d => d.GastoRegistroId)
               .OnDelete(DeleteBehavior.Cascade); // Opcional: define comportamiento de borrado
+              
+
     });
     
     modelBuilder.Entity<User>()
@@ -91,6 +93,10 @@ namespace pdt.Data
     modelBuilder.Entity<PresupuestoMovimiento>()
         .Property(p => p.MontoPresupuestado)
         .HasPrecision(18, 2);
+
+    
 }
+
+
     }
 }

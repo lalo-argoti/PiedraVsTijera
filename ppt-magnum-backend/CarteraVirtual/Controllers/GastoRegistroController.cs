@@ -81,6 +81,26 @@ return Ok(resultado);
 }
 
  
+ 
+ 
+         [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var gasto = _context.GastosRegistros
+                            .Include(g => g.Detalles)
+                            .FirstOrDefault(g => g.Id == id);
+
+            if (gasto == null)
+                return NotFound();
+
+            // Si tienes cascade delete configurado (como en OnModelCreating), esta línea es opcional
+            _context.GastosDetalles.RemoveRange(gasto.Detalles);
+
+            _context.GastosRegistros.Remove(gasto);
+            _context.SaveChanges();
+
+            return NoContent();
+        }
 //----------------------------------------------------------
           
         [HttpPost]

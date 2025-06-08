@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using pdt.Data;
+using Microsoft.EntityFrameworkCore;
+
 
 namespace pdt.Controllers
 {
@@ -48,10 +50,6 @@ namespace pdt.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
-        {
-            return NoContent();
-        }
+
     }
 }
