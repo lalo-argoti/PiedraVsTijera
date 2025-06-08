@@ -7,10 +7,11 @@ namespace pdt.Models
     {
         public int Id { get; set; }
         public DateTime Fecha { get; set; }
-        public int FondoId { get; set; }
-        public decimal Monto { get; set; }
+        public string? Remitente { get; set; }
+        public int Propietario { get; set; } 
 
-        public FondoMonetario? Fondo { get; set; }
+        public List<DepositoDetalle> Detalles { get; set; } = new();
     }
-}
 
+
+}

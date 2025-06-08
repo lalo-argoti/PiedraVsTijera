@@ -1,119 +1,114 @@
-<div class="form-container">
-  <h2 class="form-title">Registro de Depósitos</h2>
+<div class="container">
+  <h2>Gestión de Depósitos</h2>
 
-  <!-- Encabezado -->
-  <div class="form-group">
-    <h3>Encabezado</h3>
-    
-    <div class="form-group">
-      <label class="form-label">Fecha</label>
-      <input type="date" class="form-input" [(ngModel)]="encabezado.fecha" required />
-    </div>
+  <!-- Filtro por mes y año -->
+  <div class="filtro">
+    <label for="mes">Mes:</label>
+    <select id="mes" [(ngModel)]="mesSeleccionado" (change)="cambiarMes()">
+      <option *ngFor="let mes of meses" [value]="mes.id">{{ mes.nombre }}</option>
+    </select>
 
-    <div class="form-group">
-      <label class="form-label">Referencia</label>
-      <input type="text" class="form-input" [(ngModel)]="encabezado.referencia" placeholder="Número de referencia" />
-    </div>
+    <label for="anio">Año:</label>
+    <select id="anio" [(ngModel)]="anioSeleccionado" (change)="cambiarMes()">
+      <option *ngFor="let anio of anios" [value]="anio">{{ anio }}</option>
+    </select>
+  </div>
 
-    <div class="form-group">
-      <label class="form-label">Descripción</label>
-      <textarea class="form-textarea" [(ngModel)]="encabezado.descripcion" placeholder="Descripción general del depósito"></textarea>
-    </div>
+  <!-- Listado de depósitos filtrados -->
+  <div *ngIf="depositosFiltrados.length > 0" class="depositos-listado">
+    <h3>Depósitos en {{ nombreMesSeleccionado }} de {{ anioSeleccionado }}</h3>
+    <ul>
+      <li *ngFor="let deposito of depositosFiltrados">
+        <strong>Fecha:</strong> {{ deposito.encabezado.fecha | date: 'yyyy-MM-dd' }} -
+        <strong>Remitente:</strong> {{ deposito.encabezado.remitente }}
+        <button (click)="cargarDepositoExistente()">Editar</button>
+      </li>
+    </ul>
+  </div>
+  <hr />
 
-    <div class="form-group">
-      <label class="form-label">Mes y Año</label>
-      <div class="btn-group">
-        <select class="form-select" [(ngModel)]="encabezado.mes">
-          <option *ngFor="let mes of meses" [value]="mes.id">{{ mes.nombre }}</option>
+  <!-- Formulario encabezado -->
+  <form (ngSubmit)="onSubmit()">
+    <fieldset>
+      <legend>Información del Depósito</legend>
+
+      <label for="fecha">Fecha:</label>
+      <input type="date" id="fecha" [(ngModel)]="encabezado.fecha" name="fecha" required />
+
+      <label for="remitente">Remitente:</label>
+      <input type="text" id="remitente" [(ngModel)]="encabezado.remitente" name="remitente" required />
+    </fieldset>
+
+    <!-- Detalles del depósito -->
+    <fieldset>
+      <legend>Detalles</legend>
+
+      <table border="1" width="100%">
+        <thead>
+          <tr>
+            <th>Fondo</th>
+            <th>Monto COP</th>
+            <th>Monto USD</th>
+            <th>Método de Pago</th>
+            <th>Referencia</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of detalles; let i = index">
+            <td>{{ getNombreFondo(d.fondoId) }}</td>
+            <td>{{ d.montoCOP | number:'1.2-2' }}</td>
+            <td>{{ d.montoUSD | number:'1.2-2' }}</td>
+            <td>{{ getNombreMetodoPago(d.metodoPago) }}</td>
+            <td>{{ d.referenciaPago }}</td>
+            <td>
+              <button type="button" (click)="editarDetalle(i)">Editar</button>
+              <button type="button" (click)="eliminarDetalle(i)">Eliminar</button>
+            </td>
+          </tr>
+          <tr *ngIf="detalles.length === 0">
+            <td colspan="6" style="text-align:center;">No hay detalles agregados.</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td><strong>Totales:</strong></td>
+            <td><strong>{{ totalCOP | number:'1.2-2' }}</strong></td>
+            <td><strong>{{ totalUSD | number:'1.2-2' }}</strong></td>
+            <td colspan="3"></td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <!-- Formulario detalle -->
+      <div class="form-detalle">
+        <label for="fondo">Fondo:</label>
+        <select id="fondo" [(ngModel)]="detalle.fondoId" name="fondoId" required>
+          <option value="0" disabled>Seleccione un fondo</option>
+          <option *ngFor="let fondo of fondos" [value]="fondo.id">{{ fondo.nombre }}</option>
         </select>
-        <select class="form-select" [(ngModel)]="encabezado.anio">
-          <option *ngFor="let anio of anios" [value]="anio">{{ anio }}</option>
+
+        <label for="montoCOP">Monto COP:</label>
+        <input type="number" id="montoCOP" [(ngModel)]="detalle.montoCOP" name="montoCOP" min="0" />
+
+        <label for="montoUSD">Monto USD:</label>
+        <input type="number" id="montoUSD" [(ngModel)]="detalle.montoUSD" name="montoUSD" min="0" />
+
+        <label for="metodoPago">Método de Pago:</label>
+        <select id="metodoPago" [(ngModel)]="detalle.metodoPago" name="metodoPago">
+          <option *ngFor="let metodo of metodosPago" [value]="metodo.id">{{ metodo.nombre }}</option>
         </select>
+
+        <label for="referenciaPago">Referencia Pago:</label>
+        <input type="text" id="referenciaPago" [(ngModel)]="detalle.referenciaPago" name="referenciaPago" />
+
+        <div class="botones-detalle">
+          <button type="button" (click)="agregarDetalle()">{{ textoBotonDetalle }} Detalle</button>
+          <button type="button" (click)="cancelarEdicionDetalle()" *ngIf="editandoDetalleId !== null">Cancelar</button>
+        </div>
       </div>
-    </div>
-  </div>
+    </fieldset>
 
-  <div class="form-divider"></div>
-
-  <!-- Detalle -->
-  <h3>Detalle de Depósitos</h3>
-
-  <div class="form-group">
-    <label class="form-label">Fondo Monetario</label>
-    <select class="form-select" [(ngModel)]="detalle.fondoId" required>
-      <option value="">Seleccionar fondo</option>
-      <option *ngFor="let fondo of fondos" [value]="fondo.id">{{ fondo.nombre }}</option>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label class="form-label">Método de Pago</label>
-    <select class="form-select" [(ngModel)]="detalle.metodoPago" required>
-      <option *ngFor="let metodo of metodosPago" [value]="metodo.id">{{ metodo.nombre }}</option>
-    </select>
-  </div>
-
-  <div class="form-group">
-    <label class="form-label">Referencia de Pago</label>
-    <input type="text" class="form-input" [(ngModel)]="detalle.referenciaPago" placeholder="Número de transacción, cheque, etc." />
-  </div>
-
-  <div class="form-group">
-    <label class="form-label">Monto COP</label>
-    <input type="number" class="form-input" [(ngModel)]="detalle.montoCOP" min="0" step="0.01" />
-  </div>
-
-  <div class="form-group">
-    <label class="form-label">Monto USD</label>
-    <input type="number" class="form-input" [(ngModel)]="detalle.montoUSD" min="0" step="0.01" />
-  </div>
-
-  <div class="btn-group">
-    <button type="button" class="btn btn-primary" (click)="agregarDetalle()">
-      {{ editandoDetalleId !== null ? 'Actualizar' : 'Agregar' }} Detalle
-    </button>
-    <button *ngIf="editandoDetalleId !== null" type="button" class="btn btn-cancel" (click)="cancelarEdicionDetalle()">
-      Cancelar
-    </button>
-  </div>
-
-  <!-- Lista detalles -->
-  <div class="form-group">
-    <h4>Detalles Agregados ({{ detalles.length }})</h4>
-    <p class="totales">Total COP: {{ totalCOP | currency:'COP':'symbol':'1.0-0' }}</p>
-    <p class="totales">Total USD: {{ totalUSD | currency:'USD':'symbol':'1.2-2' }}</p>
-
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Fondo</th>
-          <th>Método Pago</th>
-          <th>Referencia Pago</th>
-          <th>Monto COP</th>
-          <th>Monto USD</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of detalles; let i = index">
-          <td>{{ getNombreFondo(item.fondoId) }}</td>
-          <td>{{ getNombreMetodoPago(item.metodoPago) }}</td>
-          <td>{{ item.referenciaPago }}</td>
-          <td>{{ item.montoCOP | currency:'COP':'symbol':'1.0-0' }}</td>
-          <td>{{ item.montoUSD | currency:'USD':'symbol':'1.2-2' }}</td>
-          <td>
-            <button class="btn btn-sm btn-edit" (click)="editarDetalle(i)">Editar</button>
-            <button class="btn btn-sm btn-delete" (click)="eliminarDetalle(i)">Eliminar</button>
-          </td>
-        </tr>
-        <tr *ngIf="detalles.length === 0">
-          <td colspan="6" class="text-center">No hay detalles agregados</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="form-divider"></div>
-
-  <button class="btn btn-success" (click)="onSubmit()">Guardar Depósito</button>
+    <button type="submit">Guardar Depósito</button>
+  </form>
 </div>

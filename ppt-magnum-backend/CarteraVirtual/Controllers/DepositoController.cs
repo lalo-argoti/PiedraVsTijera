@@ -1,4 +1,4 @@
-
+using Microsoft.EntityFrameworkCore;    
 using Microsoft.AspNetCore.Mvc;
 using pdt.Models;
 using pdt.Data;
@@ -16,73 +16,139 @@ namespace pdt.Controllers
             _context = context;
         }
 
-        // GET: api/DepositoController
-        [HttpGet]
+        [HttpGet("todos")]
         public IActionResult GetAll()
         {
-            // TODO: Implementar lógica para obtener todos los registros
-            return Ok();
+            int propietarioId = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value ?? "0");
+
+            var depositos = _context.Depositos
+                .Where(d => d.Propietario == propietarioId)
+                .Select(d => new
+                {
+                    d.Id,
+                    d.Fecha,
+                    d.Remitente,
+                    d.Propietario,
+                    Detalles = d.Detalles.Select(det => new
+                    {
+                        det.Id,
+                        det.FondoId,
+                        det.MontoCOP,
+                        det.MontoUSD,
+                        det.ReferenciaPago
+                    }).ToList()
+                })
+                .ToList();
+
+            return Ok(depositos);
         }
 
-        // GET: api/DepositoController/5
+
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            // TODO: Implementar lógica para obtener un registro por id
-            return Ok();
-        }
+            var deposito = _context.Depositos
+                .Include(d => d.Detalles)
+                .FirstOrDefault(d => d.Id == id);
 
-        // POST: api/DepositoController
+            if (deposito == null)
+                return NotFound();
+
+            return Ok(new
+            {
+                Encabezado = new
+                {
+                    deposito.Id,
+                    deposito.Fecha,
+                    deposito.Remitente,
+                    deposito.Propietario
+                },
+                Detalles = deposito.Detalles.Select(d => new
+                {
+                    d.Id,
+                    d.FondoId,
+                    d.MontoCOP,
+                    d.MontoUSD,
+                    d.ReferenciaPago
+                })
+            });
+        }
+ 
+[HttpGet]
+public IActionResult GetPorMes([FromQuery] int mes, [FromQuery] int anio)
+{
+    int propietario=1;// = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value ?? "0");
+
+    var depositos = _context.Depositos
+        .Include(d => d.Detalles)
+        .Where(d => d.Fecha.Month == mes && d.Fecha.Year == anio && d.Propietario == propietario)
+        .ToList();
+
+    if (!depositos.Any())
+        return NotFound("No se encontraron depósitos en el mes y año proporcionados para este propietario.");
+
+    var resultado = depositos.Select(deposito => new
+    {
+        Encabezado = new
+        {
+            deposito.Id,
+            deposito.Fecha,
+            deposito.Remitente,
+            deposito.Propietario
+        },
+        Detalles = deposito.Detalles.Select(d => new
+        {
+            d.Id,
+            d.FondoId,
+            d.MontoCOP,
+            d.MontoUSD,
+            d.ReferenciaPago
+        })
+    });
+
+    return Ok(resultado);
+}
+
+ 
+   
         [HttpPost]
         public IActionResult Create([FromBody] DepositoTransaccionDto transaccion)
         {
-            if (transaccion.Detalles == null || transaccion.Detalles.Count == 0)
+            if (transaccion == null || transaccion.Detalles == null || !transaccion.Detalles.Any())
+                return BadRequest("Debe proporcionar encabezado y al menos un detalle.");
+
+            int propietario = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value ?? "0");
+
+            var deposito = new Deposito
             {
-                return BadRequest("Debe proporcionar al menos un detalle de depósito.");
-            }
+                Fecha = transaccion.Encabezado.Fecha,
+                Remitente = transaccion.Encabezado.Remitente,
+                Propietario = propietario,
+                Detalles = transaccion.Detalles.Select(d => new DepositoDetalle
+                {
+                    FondoId = d.FondoId,
+                    MontoCOP = d.MontoCOP,
+                    MontoUSD = d.MontoUSD,
+                    ReferenciaPago = d.ReferenciaPago
+                }).ToList()
+            };
 
-            foreach (var detalle in transaccion.Detalles)
+            _context.Depositos.Add(deposito);
+
+            foreach (var detalle in deposito.Detalles)
             {
-                if (detalle.MontoCOP > 0)
+                var fondo = _context.FondosMonetarios.FirstOrDefault(f => f.Id == detalle.FondoId);
+                if (fondo != null)
                 {
-                    var depositoCop = new Deposito
-                    {
-                        Fecha = transaccion.Encabezado.Fecha,
-                        FondoId = detalle.FondoId,
-                        Monto = detalle.MontoCOP
-                    };
-                    _context.Depositos.Add(depositoCop);
-
-                    // Actualiza el capital en COP
-                    var fondo = _context.FondosMonetarios.FirstOrDefault(f => f.Id == detalle.FondoId);
-                    if (fondo != null)
-                    {
-                        fondo.CapitalCOP += detalle.MontoCOP;
-                    }
-                }
-
-                if (detalle.MontoUSD > 0)
-                {
-                    var depositoUsd = new Deposito
-                    {
-                        Fecha = transaccion.Encabezado.Fecha,
-                        FondoId = detalle.FondoId,
-                        Monto = detalle.MontoUSD
-                    };
-                    _context.Depositos.Add(depositoUsd);
-
-                    // Actualiza el capital en USD
-                    var fondo = _context.FondosMonetarios.FirstOrDefault(f => f.Id == detalle.FondoId);
-                    if (fondo != null)
-                    {
-                        fondo.CapitalUSD += detalle.MontoUSD;
-                    }
+                    fondo.CapitalCOP += detalle.MontoCOP;
+                    fondo.CapitalUSD += detalle.MontoUSD;
                 }
             }
 
             _context.SaveChanges();
-            return Ok(new { message = "Depósito registrado exitosamente" });
+            return Ok(new { message = "Depósito registrado correctamente." });
         }
+
 
         // PUT: api/DepositoController/5
         [HttpPut("{id}")]

@@ -22,7 +22,7 @@ namespace pdt.Data
         public DbSet<Deposito> Depositos { get; set; }
         public DbSet<GastoRegistroPlanoDto> GastoRegistroPlanoDtos { get; set; }
         public List<GastoDetalle2Dto> Detalles { get; set; } = new();  
-
+       
  protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
     modelBuilder.Entity<User>().ToTable("pdt_users");

@@ -1,131 +1,195 @@
-.form-container {
-  max-width: 800px;
-  margin: auto;
-  background: white;
+/* 1. Estilos Base para Contenedores */
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
   padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  background-color: #ffffff;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-.form-title {
+h2 {
+  color: #1e3a8a;
   text-align: center;
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}
+
+/* 2. Estilos para Filtros */
+.filtro {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.filtro select {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+}
+
+/* 3. Estilos para Listas de Items */
+.depositos-listado ul {
+  list-style-type: none;
+  padding-left: 0;
+  margin-bottom: 1.5rem;
+}
+
+.depositos-listado li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  margin-bottom: 0.75rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.depositos-listado li:hover {
+  transform: translateY(-2px);
+}
+
+/* 4. Estilos para Formulario */
+fieldset {
+  border: none;
+  margin-bottom: 2rem;
+}
+
+legend {
+  font-size: 1.25rem;
+  font-weight: 600;
   margin-bottom: 1rem;
-  color: #2c3e50;
+  color: #1e40af;
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
-.form-label {
+label {
   display: block;
-  font-weight: 600;
   margin-bottom: 0.5rem;
-  color: #34495e;
-}
-
-.form-input, .form-select, .form-textarea {
-  width: 100%;
-  padding: 0.4rem 0.6rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
-
-.form-textarea {
-  resize: vertical;
-  min-height: 60px;
-}
-
-.btn-group {
-  display: flex;
-  gap: 10px;
-  margin-top: 0.5rem;
-}
-
-.btn {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
   font-weight: 600;
-  font-size: 1rem;
-  color: white;
-  transition: background-color 0.3s ease;
+  color: #374151;
+  font-size: 0.95rem;
 }
 
-.btn-primary {
-  background-color: #007bff;
-}
-
-.btn-primary:hover {
-  background-color: #0056b3;
-}
-
-.btn-cancel {
-  background-color: #6c757d;
-}
-
-.btn-cancel:hover {
-  background-color: #5a6268;
-}
-
-.btn-success {
-  background-color: #28a745;
+input,
+select,
+textarea {
   width: 100%;
-  margin-top: 1rem;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background-color: #f9fafb;
+  transition: all 0.3s ease;
 }
 
-.btn-success:hover {
-  background-color: #1e7e34;
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  background-color: #ffffff;
 }
 
-.btn-sm {
-  padding: 0.3rem 0.6rem;
-  font-size: 0.85rem;
-  margin-right: 0.3rem;
-}
-
-.btn-edit {
-  background-color: #17a2b8;
-}
-
-.btn-edit:hover {
-  background-color: #117a8b;
-}
-
-.btn-delete {
-  background-color: #dc3545;
-}
-
-.btn-delete:hover {
-  background-color: #bd2130;
-}
-
-.table {
+/* Tabla de Detalles */
+table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 1rem;
 }
 
-.table th, .table td {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #dee2e6;
+th,
+td {
+  padding: 0.75rem;
   text-align: left;
+  border: 1px solid #e5e7eb;
 }
 
-.totales {
-  font-weight: 700;
-  margin-top: 0.5rem;
+tfoot td {
+  font-weight: bold;
 }
 
-.text-center {
-  text-align: center;
+/* 5. Botones */
+button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
 }
 
-.form-divider {
-  border-top: 1px solid #ccc;
-  margin: 1.5rem 0;
+/* Botón principal (Guardar) */
+button[type="submit"] {
+  background-color: #3b82f6;
+  color: white;
+  margin-top: 1.5rem;
+}
+
+button[type="submit"]:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* Botones en tabla */
+button.btn-edit {
+  background-color: #f59e0b;
+  color: white;
+}
+
+button.btn-edit:hover {
+  background-color: #d97706;
+}
+
+button.btn-delete {
+  background-color: #ef4444;
+  color: white;
+}
+
+button.btn-delete:hover {
+  background-color: #dc2626;
+}
+
+button.btn-cancel {
+  background-color: #6b7280;
+  color: white;
+}
+
+button.btn-cancel:hover {
+  background-color: #4b5563;
+}
+
+/* Grupo de botones */
+.botones-detalle {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .filtro {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .botones-detalle {
+    flex-direction: column;
+  }
+
+  button {
+    width: 100%;
+  }
 }
