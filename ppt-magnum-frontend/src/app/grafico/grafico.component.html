@@ -35,15 +35,23 @@
     {{ error }}
   </div>
 
-  <!-- Gráfico -->
-  <div *ngIf="barChartData.datasets.length > 0 && !cargando" class="grafico-wrapper">
-    <canvas baseChart
-      [data]="barChartData"
-      [options]="barChartOptions"
-      [type]="barChartType"
-      [legend]="barChartLegend">
-    </canvas>
-  </div>
+<div style="margin-bottom: 2rem;">
+  <canvas baseChart
+          [data]="barChartData"
+          [options]="barChartOptionsCOP"
+          [type]="barChartType"
+          [legend]="barChartLegend">
+  </canvas>
+</div>
+
+<div>
+  <canvas baseChart
+          [data]="barChartUSDData"
+          [options]="barChartOptionsUSD"
+          [type]="barChartType"
+          [legend]="barChartLegend">
+  </canvas>
+</div>
 
   <!-- Mensaje sin datos -->
   <div *ngIf="!barChartData?.datasets?.length && !cargando" class="text-muted">

@@ -14,8 +14,8 @@ import { environment } from '../../environments/environment';
   styleUrls: ['./grafico.component.css']
 })
 export class GraficoComponent implements OnInit {
-  // Configuración del gráfico con tipos correctos
-  public barChartOptions: ChartConfiguration['options'] = {
+  // Opciones gráfico COP
+  public barChartOptionsCOP: ChartConfiguration['options'] = {
     responsive: true,
     scales: {
       x: { stacked: false },
@@ -40,7 +40,7 @@ export class GraficoComponent implements OnInit {
     plugins: {
       title: {
         display: true,
-        text: 'Presupuesto vs. Ejecución por Tipo de Gasto',
+        text: 'Presupuesto vs. Ejecución por Tipo de Gasto (COP)',
         font: { size: 16 }
       },
       legend: { position: 'top' },
@@ -63,10 +63,64 @@ export class GraficoComponent implements OnInit {
     }
   };
 
+  // Opciones gráfico USD
+  public barChartOptionsUSD: ChartConfiguration['options'] = {
+    responsive: true,
+    scales: {
+      x: { stacked: false },
+      y: {
+        stacked: false,
+        beginAtZero: true,
+        title: { display: true, text: 'Montos (USD)' },
+        ticks: {
+          callback: (value: string | number) => {
+            if (typeof value === 'number') {
+              return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0
+              }).format(value);
+            }
+            return value;
+          }
+        }
+      }
+    },
+    plugins: {
+      title: {
+        display: true,
+        text: 'Presupuesto vs. Ejecución por Tipo de Gasto (USD)',
+        font: { size: 16 }
+      },
+      legend: { position: 'top' },
+      tooltip: {
+        callbacks: {
+          label: (context: any) => {
+            let label = context.dataset.label || '';
+            if (label) label += ': ';
+            if (context.raw !== null) {
+              label += new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0
+              }).format(Number(context.raw));
+            }
+            return label;
+          }
+        }
+      }
+    }
+  };
+
+  // Variables para el gráfico COP
   public barChartLabels: string[] = [];
   public barChartType: ChartType = 'bar';
   public barChartLegend = true;
   public barChartData: ChartConfiguration['data'] = { labels: [], datasets: [] };
+
+  // Variables para el gráfico USD
+  public barChartUSDLabels: string[] = [];
+  public barChartUSDData: ChartConfiguration['data'] = { labels: [], datasets: [] };
 
   // Filtros para el formulario
   meses = [
@@ -91,8 +145,7 @@ export class GraficoComponent implements OnInit {
   ngOnInit(): void {
     this.cargarDatosIniciales()
       .then(() => {
-        // Opcional: cargar datos iniciales con filtros por defecto
-        // this.consultarDatos();
+        // Puedes llamar a consultarDatos() aquí para cargar los gráficos iniciales
       })
       .catch(err => {
         this.error = 'Error al cargar datos iniciales';
@@ -101,7 +154,6 @@ export class GraficoComponent implements OnInit {
   }
 
   cargarDatosIniciales(): Promise<void> {
-    console.log("Se van a cargar desde:", this.initUrl);
     return new Promise((resolve, reject) => {
       this.http.get<any>(this.initUrl).subscribe({
         next: (data) => {
@@ -145,22 +197,41 @@ export class GraficoComponent implements OnInit {
   }
 
   procesarDatos(data: any) {
-  const tipo = this.tiposGasto.find(t => t.id === this.tipoGastoIdSeleccionado);
-  const label = tipo ? tipo.nombre : 'Tipo de Gasto';
+    const tipo = this.tiposGasto.find(t => t.id === this.tipoGastoIdSeleccionado);
+    const label = tipo ? tipo.nombre : 'Tipo de Gasto';
 
-  const presupuestado = data.presupuestado?.montoCOP || 0;
-  const ejecutado = data.ejecutado?.montoCOP || 0;
-  const diferencia = presupuestado - ejecutado;
+    // Datos COP
+    const presupuestadoCOP = data.presupuestado?.montoCOP || 0;
+    const ejecutadoCOP = data.ejecutado?.montoCOP || 0;
+    const diferenciaCOP = presupuestadoCOP - ejecutadoCOP;
 
-  this.barChartLabels = [label];
-  this.barChartData = {
-    labels: this.barChartLabels,
-    datasets: [
-      { label: 'Presupuestado', data: [presupuestado], backgroundColor: '#3b82f6' },
-      { label: 'Ejecutado', data: [ejecutado], backgroundColor: '#10b981' },
-      { label: 'Diferencia', data: [diferencia], backgroundColor: '#f59e0b' }
-    ]
-  };
-}
+    // Datos USD
+    const presupuestadoUSD = data.presupuestado?.montoUSD || 0;
+    const ejecutadoUSD = data.ejecutado?.montoUSD || 0;
+    const diferenciaUSD = presupuestadoUSD - ejecutadoUSD;
 
+    // Labels para ambos gráficos (igual etiqueta)
+    this.barChartLabels = [label];
+    this.barChartUSDLabels = [label];
+
+    // Asignar datos al gráfico COP
+    this.barChartData = {
+      labels: this.barChartLabels,
+      datasets: [
+        { label: 'Presupuestado', data: [presupuestadoCOP], backgroundColor: '#3b82f6' },
+        { label: 'Ejecutado', data: [ejecutadoCOP], backgroundColor: '#10b981' },
+        { label: 'Diferencia', data: [diferenciaCOP], backgroundColor: '#f59e0b' }
+      ]
+    };
+
+    // Asignar datos al gráfico USD
+    this.barChartUSDData = {
+      labels: this.barChartUSDLabels,
+      datasets: [
+        { label: 'Presupuestado', data: [presupuestadoUSD], backgroundColor: '#3b82f6' },
+        { label: 'Ejecutado', data: [ejecutadoUSD], backgroundColor: '#10b981' },
+        { label: 'Diferencia', data: [diferenciaUSD], backgroundColor: '#f59e0b' }
+      ]
+    };
+  }
 }
