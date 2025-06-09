@@ -5,6 +5,17 @@ import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { environment } from '../../environments/environment';
 
+interface Movimiento {
+  tipo: 'deposito' | 'gasto';
+  fecha: string;
+  montoCOP: number;
+  montoUSD: number;
+  descripcion: string;
+  referencia?: string; 
+   tipoGasto?: string; 
+   fondo?: number;
+   metodoPago?: string;
+}
 
 @Component({
   selector: 'app-movimientos',
@@ -15,7 +26,7 @@ import { environment } from '../../environments/environment';
   providers: [DatePipe]
 })
 export class MovimientosComponent implements OnInit {
-  movimientos: any[] = [];
+  movimientos: Movimiento[] = [];
   fechaInicio: string;
   fechaFin: string;
   cargando: boolean = false;
@@ -50,8 +61,8 @@ export class MovimientosComponent implements OnInit {
       fecha_inicio: this.fechaInicio,
       fecha_fin: this.fechaFin
     };
-
-    this.http.get<any[]>(`${environment.apiUrl}/api/movimientos`, { params })
+  
+    this.http.get<Movimiento[]>(`${environment.apiUrl}/api/PresupuestoMovimiento/balance`, { params })
       .subscribe({
         next: (data) => {
           this.movimientos = data;

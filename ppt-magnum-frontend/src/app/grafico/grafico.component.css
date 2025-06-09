@@ -1,8 +1,8 @@
 /* Contenedor principal */
-.form-container {
-  max-width: 900px;
-  margin: 1.5rem auto;
-  padding: 1.75rem;
+.grafico-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
   border: 1px solid #e2e8f0;
   border-radius: 0.75rem;
   background-color: #ffffff;
@@ -10,8 +10,8 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-/* Título */
-.form-title {
+/* Título del formulario */
+.grafico-title {
   margin-bottom: 1.75rem;
   color: #1e3a8a;
   text-align: center;
@@ -20,11 +20,20 @@
   letter-spacing: -0.025em;
 }
 
+/* Divisor */
+.grafico-divider {
+  border: 0;
+  height: 1px;
+  background-color: #e2e8f0;
+  margin: 1.75rem 0;
+}
+
 /* Grupos de formulario */
 .form-group {
   margin-bottom: 1.25rem;
 }
 
+/* Etiquetas del formulario */
 .form-label {
   display: block;
   margin-bottom: 0.5rem;
@@ -33,7 +42,7 @@
   font-size: 0.95rem;
 }
 
-/* Campos de formulario */
+/* Inputs y selects */
 .form-input,
 .form-select {
   width: 100%;
@@ -51,6 +60,14 @@
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
   background-color: #ffffff;
+}
+
+/* Mensaje de error */
+.form-error {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  display: block;
 }
 
 /* Botones */
@@ -83,52 +100,21 @@
   transform: none;
 }
 
-/* Filtros */
-.filtros-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  align-items: end;
-}
-
-/* Gráfico */
-.chart-container {
-  position: relative;
-  height: 400px;
-  margin: 2rem 0;
-}
-
-/* Alertas */
-.alert {
-  padding: 0.75rem 1.25rem;
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.alert-danger {
-  color: #dc2626;
-  background-color: #fee2e2;
-  border: 1px solid #fca5a5;
-}
-
-/* Leyenda */
-.leyenda {
+/* Grupo de botones */
+.btn-group {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.btn-group .btn {
+  flex: 1;
+}
+
+/* Mensaje general de error */
+.error-message {
+  color: #ef4444;
+  font-weight: 600;
   margin-top: 1rem;
-}
-
-.leyenda-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.leyenda-color {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
+  text-align: center;
 }

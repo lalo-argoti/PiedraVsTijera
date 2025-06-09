@@ -73,7 +73,8 @@ export class FondoMonetarioComponent implements OnInit {
       capitalCOP: this.capitalCOP,
       capitalUSD: this.capitalUSD
     };
-
+    //console.log("76: ",fondo);
+    
     if (this.editandoId !== null) {
       this.http.put(`${this.apiUrl}/${this.editandoId}`, fondo, { headers: this.getAuthHeaders() }).subscribe({
         next: () => {

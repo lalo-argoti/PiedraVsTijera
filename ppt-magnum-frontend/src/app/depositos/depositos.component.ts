@@ -102,22 +102,26 @@ ngOnInit() {
         console.error('Error al cargar datos iniciales', err);
         reject(err);
       }
+      
     });
   });
 }
 
   cargarDepositosPorMes() {
+      
     const params = new HttpParams()
       .set('mes', this.mesSeleccionado.toString())
       .set('anio', this.anioSeleccionado.toString());
 
     this.http.get<DepositoTransaccion[]>(this.apiUrl, { params }).subscribe({
       next: data => {
+        console.log('Depósitos obtenidos:', data);
         this.depositosFiltrados = data;
       },
       error: err => {
         console.error('Error cargando depósitos por mes', err);
       }
+      
     });
   }
 
@@ -125,33 +129,33 @@ ngOnInit() {
     this.cargarDepositosPorMes();
   }
 
-  cargarDepositoExistente() {
-    this.http.get<DepositoTransaccion>(`${this.apiUrl}/1`).subscribe({
-      next: (data) => {
-        this.encabezado = {
-          id: data.encabezado.id,
-          fecha: data.encabezado.fecha?.split('T')[0] || new Date().toISOString().split('T')[0],
-          remitente: data.encabezado.remitente,
-          propietario: data.encabezado.propietario
-        };
-        this.editandoDepositoId = data.encabezado.id || null;
+cargarDepositoExistente(id: number) {
+  this.http.get<DepositoTransaccion>(`${this.apiUrl}/${id}`).subscribe({
+    next: (data) => {
+      this.encabezado = {
+        id: data.encabezado.id,
+        fecha: data.encabezado.fecha?.split('T')[0] || new Date().toISOString().split('T')[0],
+        remitente: data.encabezado.remitente,
+        propietario: data.encabezado.propietario
+      };
+      this.editandoDepositoId = data.encabezado.id || null;
 
-        this.detalles = data.detalles.map(d => ({
-          id: d.id,
-          fondoId: d.fondoId,
-          montoCOP: d.montoCOP,
-          montoUSD: d.montoUSD,
-          metodoPago: d.metodoPago || 'transferencia',
-          referenciaPago: d.referenciaPago || ''
-        }));
+      this.detalles = data.detalles.map(d => ({
+        id: d.id,
+        fondoId: d.fondoId,
+        montoCOP: d.montoCOP,
+        montoUSD: d.montoUSD,
+        metodoPago: d.metodoPago || 'transferencia',
+        referenciaPago: d.referenciaPago || ''
+      }));
 
-        this.calcularTotales();
-      },
-      error: err => {
-        console.error('Error cargando depósito', err);
-      }
-    });
-  }
+      this.calcularTotales();
+    },
+    error: err => {
+      console.error('Error cargando depósito', err);
+    }
+  });
+}
 
   agregarDetalle() {
     if (!this.detalle.fondoId || this.detalle.fondoId === 0) {
@@ -167,6 +171,7 @@ ngOnInit() {
     if (this.editandoDetalleId !== null) {
       this.detalles[this.editandoDetalleId] = { ...this.detalle };
       this.editandoDetalleId = null;
+      console.log("174:  " , this.detalle)
     } else {
       this.detalles.push({ ...this.detalle });
     }
@@ -221,7 +226,9 @@ ngOnInit() {
       this.http.put(`${this.apiUrl}/${this.editandoDepositoId}`, transaccion).subscribe({
         next: () => {
           alert('Depósito actualizado correctamente');
+          console.log(transaccion);
           this.resetearFormulario();
+          this.cargarDepositosPorMes(); 
         },
         error: err => {
           console.error('Error al actualizar depósito', err);
@@ -231,8 +238,11 @@ ngOnInit() {
     } else {
       this.http.post(this.apiUrl, transaccion).subscribe({
         next: () => {
+          console.log(transaccion);
           alert('Depósito registrado correctamente');
+          
           this.resetearFormulario();
+          this.cargarDepositosPorMes(); 
         },
         error: err => {
           console.error('Error al guardar depósito', err);
@@ -242,6 +252,8 @@ ngOnInit() {
     }
   }
 
+
+  
   resetearFormulario() {
     this.encabezado = {
       fecha: new Date().toISOString().split('T')[0],

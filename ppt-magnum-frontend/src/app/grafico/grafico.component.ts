@@ -6,7 +6,6 @@ import { NgChartsModule } from 'ng2-charts';
 import { ChartConfiguration, ChartType } from 'chart.js';
 import { environment } from '../../environments/environment';
 
-
 @Component({
   selector: 'app-grafico',
   standalone: true,
@@ -19,16 +18,11 @@ export class GraficoComponent implements OnInit {
   public barChartOptions: ChartConfiguration['options'] = {
     responsive: true,
     scales: {
-      x: {
-        stacked: true,
-      },
+      x: { stacked: true },
       y: {
         stacked: false,
         beginAtZero: true,
-        title: {
-          display: true,
-          text: 'Montos (COP)'
-        },
+        title: { display: true, text: 'Montos (COP)' },
         ticks: {
           callback: (value: string | number) => {
             if (typeof value === 'number') {
@@ -47,20 +41,14 @@ export class GraficoComponent implements OnInit {
       title: {
         display: true,
         text: 'Presupuesto vs. Ejecución por Tipo de Gasto',
-        font: {
-          size: 16
-        }
+        font: { size: 16 }
       },
-      legend: {
-        position: 'top',
-      },
+      legend: { position: 'top' },
       tooltip: {
         callbacks: {
           label: (context: any) => {
             let label = context.dataset.label || '';
-            if (label) {
-              label += ': ';
-            }
+            if (label) label += ': ';
             if (context.raw !== null) {
               label += new Intl.NumberFormat('es-CO', {
                 style: 'currency',
@@ -78,111 +66,101 @@ export class GraficoComponent implements OnInit {
   public barChartLabels: string[] = [];
   public barChartType: ChartType = 'bar';
   public barChartLegend = true;
-  public barChartData: ChartConfiguration['data'] = {
-    labels: this.barChartLabels,
-    datasets: []
-  };
+  public barChartData: ChartConfiguration['data'] = { labels: [], datasets: [] };
 
-  // Filtros
-  fechaInicio: string;
-  fechaFin: string;
-  cargando: boolean = false;
-  error: string = '';
+  // Filtros para el formulario
+  meses = [
+    { id: 1, nombre: 'Enero' }, { id: 2, nombre: 'Febrero' }, { id: 3, nombre: 'Marzo' },
+    { id: 4, nombre: 'Abril' }, { id: 5, nombre: 'Mayo' }, { id: 6, nombre: 'Junio' },
+    { id: 7, nombre: 'Julio' }, { id: 8, nombre: 'Agosto' }, { id: 9, nombre: 'Septiembre' },
+    { id: 10, nombre: 'Octubre' }, { id: 11, nombre: 'Noviembre' }, { id: 12, nombre: 'Diciembre' }
+  ];
+  anios = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i);
 
-  // Datos
+  mesSeleccionado: number = new Date().getMonth() + 1;
+  anioSeleccionado: number = new Date().getFullYear();
+  tipoGastoIdSeleccionado: number | null = null;
+
   tiposGasto: any[] = [];
+  cargando = false;
+  error = '';
+  private initUrl = `${environment.apiUrl}/api/presupuestomovimiento/init`;
 
-  constructor(private http: HttpClient) {
-    const hoy = new Date();
-    const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-    
-    this.fechaInicio = this.formatDate(primerDiaMes);
-    this.fechaFin = this.formatDate(hoy);
-  }
+  constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.cargarTiposGasto();
-  }
-
-  private formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
-  }
-
-  cargarTiposGasto() {
-    this.http.get<any[]>(`${environment.apiUrl}/api/tipos-gasto`)
-      .subscribe({
-        next: (data) => {
-          this.tiposGasto = data;
-          this.consultarDatos();
-        },
-        error: (err) => {
-          console.error('Error al cargar tipos de gasto:', err);
-          this.error = 'Error al cargar los tipos de gasto';
-        }
+    this.cargarDatosIniciales()
+      .then(() => {
+        // Opcional: cargar datos iniciales con filtros por defecto
+        // this.consultarDatos();
+      })
+      .catch(err => {
+        this.error = 'Error al cargar datos iniciales';
+        console.error(err);
       });
   }
 
+  cargarDatosIniciales(): Promise<void> {
+    console.log("Se van a cargar desde:", this.initUrl);
+    return new Promise((resolve, reject) => {
+      this.http.get<any>(this.initUrl).subscribe({
+        next: (data) => {
+          this.tiposGasto = data.tiposGasto || [];
+          resolve();
+        },
+        error: (err) => {
+          console.error('Error al cargar datos iniciales', err);
+          reject(err);
+        }
+      });
+    });
+  }
+
   consultarDatos() {
-    if (!this.fechaInicio || !this.fechaFin) {
-      this.error = 'Debe seleccionar ambas fechas';
+    if (!this.mesSeleccionado || !this.anioSeleccionado || !this.tipoGastoIdSeleccionado) {
+      this.error = 'Debe seleccionar mes, año y tipo de gasto';
       return;
     }
 
     this.cargando = true;
     this.error = '';
-    
+
     const params = {
-      fecha_inicio: this.fechaInicio,
-      fecha_fin: this.fechaFin
+      mes: this.mesSeleccionado.toString(),
+      anio: this.anioSeleccionado.toString(),
+      tipoGastoId: this.tipoGastoIdSeleccionado.toString()
     };
 
-    this.http.get<any>(`${environment.apiUrl}/api/presupuesto-ejecucion`, { params })
-      .subscribe({
-        next: (data) => {
-          this.procesarDatos(data);
-          this.cargando = false;
-        },
-        error: (err) => {
-          console.error('Error al consultar datos:', err);
-          this.error = 'Error al cargar los datos para el gráfico';
-          this.cargando = false;
-        }
-      });
+    this.http.get<any>(`${environment.apiUrl}/api/PresupuestoMovimiento/ejecucion`, { params }).subscribe({
+      next: (data) => {
+        this.procesarDatos(data);
+        this.cargando = false;
+      },
+      error: (err) => {
+        console.error('Error al consultar datos:', err);
+        this.error = 'Error al cargar los datos para el gráfico';
+        this.cargando = false;
+      }
+    });
   }
 
   procesarDatos(data: any) {
-    this.barChartLabels = this.tiposGasto.map(tipo => tipo.nombre);
-    
-    this.barChartData = {
-      labels: this.barChartLabels,
-      datasets: [
-        {
-          label: 'Presupuestado',
-          data: this.tiposGasto.map(tipo => 
-            data.presupuestado.find((item: any) => item.tipoGastoId === tipo.id)?.montoCOP || 0
-          ),
-          backgroundColor: '#3b82f6',
-          hoverBackgroundColor: '#2563eb'
-        },
-        {
-          label: 'Ejecutado',
-          data: this.tiposGasto.map(tipo => 
-            data.ejecutado.find((item: any) => item.tipoGastoId === tipo.id)?.montoCOP || 0
-          ),
-          backgroundColor: '#10b981',
-          hoverBackgroundColor: '#059669'
-        },
-        {
-          label: 'Diferencia',
-          data: this.tiposGasto.map(tipo => {
-            const presupuesto = data.presupuestado.find((item: any) => item.tipoGastoId === tipo.id)?.montoCOP || 0;
-            const ejecutado = data.ejecutado.find((item: any) => item.tipoGastoId === tipo.id)?.montoCOP || 0;
-            return presupuesto - ejecutado;
-          }),
-          backgroundColor: '#f59e0b',
-          hoverBackgroundColor: '#d97706'
-        }
-      ]
-    };
-  }
+  const tipo = this.tiposGasto.find(t => t.id === this.tipoGastoIdSeleccionado);
+  const label = tipo ? tipo.nombre : 'Tipo de Gasto';
+
+  const presupuestado = data.presupuestado?.montoCOP || 0;
+  const ejecutado = data.ejecutado?.montoCOP || 0;
+  const diferencia = presupuestado - ejecutado;
+
+  this.barChartLabels = [label];
+  this.barChartData = {
+    labels: this.barChartLabels,
+    datasets: [
+      { label: 'Presupuestado', data: [presupuestado], backgroundColor: '#3b82f6' },
+      { label: 'Ejecutado', data: [ejecutado], backgroundColor: '#10b981' },
+      { label: 'Diferencia', data: [diferencia], backgroundColor: '#f59e0b' }
+    ]
+  };
+}
+
 }

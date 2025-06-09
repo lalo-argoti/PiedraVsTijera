@@ -89,7 +89,7 @@ namespace pdt.Controllers
 
             var entity = new FondoMonetario
             {  
-                //Id = codigoGenerado,    
+                Id = userId * 100000 + random.Next(100, 999),    
                 
                 Nombre = model.Nombre,
                 Tipo = model.Tipo,

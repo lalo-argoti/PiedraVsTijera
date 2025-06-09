@@ -4,15 +4,19 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 
-// Interfaces locales (pueden generarse automáticamente desde C#)
-interface FondoMonetarioDto {
+// Interfaces
+interface GastoTipoDto {
   id: number;
   nombre: string;
 }
 
-interface GastoTipoDto {
-  id: number;
-  nombre: string;
+interface PresupuestoMovimiento {
+  id?: number;
+  gastoTipoId: number;
+  montoPresupuestadoUSD: number;
+  montoPresupuestadoCOP: number;
+  mes: number;
+  anio: number;
 }
 
 @Component({
@@ -23,11 +27,8 @@ interface GastoTipoDto {
   styleUrls: ['./presupuesto.component.css']
 })
 export class PresupuestoComponent implements OnInit {
-  fondos: FondoMonetarioDto[] = [];
   tiposGasto: GastoTipoDto[] = [];
-
-  gastos: any[] = [];
-
+  gastos: PresupuestoMovimiento[] = [];
 
   meses = [
     { id: 1, nombre: 'Enero' }, { id: 2, nombre: 'Febrero' }, { id: 3, nombre: 'Marzo' },
@@ -40,30 +41,20 @@ export class PresupuestoComponent implements OnInit {
   mesSeleccionado = new Date().getMonth() + 1;
   anioSeleccionado = new Date().getFullYear();
 
-  nuevoGasto = {
-    fecha: new Date().toISOString().split('T')[0],
-    tipoGastoId: '',
-    fondoId: '',
-    montoCOP: 0,
-    montoUSD: 0,
-    descripcion: ''
+  nuevoGasto: PresupuestoMovimiento = {
+    gastoTipoId: 0,
+    montoPresupuestadoCOP: 0,
+    montoPresupuestadoUSD: 0,
+    mes: this.mesSeleccionado,
+    anio: this.anioSeleccionado
   };
 
   totalGastadoCOP = 0;
   totalGastadoUSD = 0;
   editandoId: number | null = null;
-  
-  cargarDatosUsuario() {
-  this.http.get<FondoMonetarioDto[]>('/api/movimientos').subscribe({
-    next: data => this.fondos = data
-  });
-
-  this.http.get<GastoTipoDto[]>('/api/movimientos/tipos-gasto').subscribe({
-    next: data => this.tiposGasto = data
-  });
-  }
 
   private apiUrl = `${environment.apiUrl}/api/gastos`;
+  private initUrl = `${environment.apiUrl}/api/presupuestomovimiento/init`;
 
   constructor(private http: HttpClient) {}
 
@@ -71,18 +62,23 @@ export class PresupuestoComponent implements OnInit {
     this.cargarDatosIniciales();
     this.cargarGastos();
   }
-  
-  
 
- cargarDatosIniciales() {
-  this.http.get<any>(`${environment.apiUrl}/api/presupuestomovimiento/init`).subscribe({
-    next: (data) => {
-      this.fondos = data.fondos;
-      this.tiposGasto = data.tiposGasto;
-    },
-    error: (err) => console.error('Error al cargar datos iniciales', err)
+cargarDatosIniciales(): Promise<void> {
+  console.log("Se vana a cargar desde:", this.initUrl);
+  return new Promise((resolve, reject) => {
+    this.http.get<any>(this.initUrl).subscribe({
+      next: (data) => {
+        this.tiposGasto = data.tiposGasto;
+        resolve();
+      },
+      error: (err) => {
+        console.error('Error al cargar datos iniciales', err);
+        reject(err);
+      }
+    });
   });
 }
+
 
   cargarGastos() {
     const params = {
@@ -90,7 +86,7 @@ export class PresupuestoComponent implements OnInit {
       anio: this.anioSeleccionado.toString()
     };
 
-    this.http.get<any[]>(this.apiUrl, { params }).subscribe({
+    this.http.get<PresupuestoMovimiento[]>(this.apiUrl, { params }).subscribe({
       next: (data) => {
         this.gastos = data;
         this.calcularTotales();
@@ -100,26 +96,25 @@ export class PresupuestoComponent implements OnInit {
   }
 
   calcularTotales() {
-    this.totalGastadoCOP = this.gastos.reduce((sum, gasto) => sum + (gasto.montoCOP || 0), 0);
-    this.totalGastadoUSD = this.gastos.reduce((sum, gasto) => sum + (gasto.montoUSD || 0), 0);
+    this.totalGastadoCOP = this.gastos.reduce((sum, g) => sum + (g.montoPresupuestadoCOP || 0), 0);
+    this.totalGastadoUSD = this.gastos.reduce((sum, g) => sum + (g.montoPresupuestadoUSD || 0), 0);
   }
 
   onSubmit() {
-    const gastoData = {
-      ...this.nuevoGasto,
-      mes: this.mesSeleccionado,
-      anio: this.anioSeleccionado
-    };
+    this.nuevoGasto.mes = this.mesSeleccionado;
+    this.nuevoGasto.anio = this.anioSeleccionado;
 
     if (this.editandoId) {
-      this.actualizarGasto(gastoData);
+      this.actualizarGasto();
     } else {
-      this.crearGasto(gastoData);
+      this.crearGasto();
     }
   }
 
-  private crearGasto(gastoData: any) {
-    this.http.post(this.apiUrl, gastoData).subscribe({
+  crearGasto() {
+    console.log("119: ",this.nuevoGasto);
+
+    this.http.post(this.apiUrl, this.nuevoGasto).subscribe({
       next: () => {
         this.cargarGastos();
         this.limpiarFormulario();
@@ -128,8 +123,15 @@ export class PresupuestoComponent implements OnInit {
     });
   }
 
-  private actualizarGasto(gastoData: any) {
-    this.http.put(`${this.apiUrl}/${this.editandoId}`, gastoData).subscribe({
+  actualizarGasto() {
+    if (!this.editandoId) return;
+
+    const gastoActualizado: PresupuestoMovimiento = {
+      ...this.nuevoGasto,
+      id: this.editandoId
+    };
+
+    this.http.put(`${this.apiUrl}/${this.editandoId}`, gastoActualizado).subscribe({
       next: () => {
         this.cargarGastos();
         this.limpiarFormulario();
@@ -138,22 +140,19 @@ export class PresupuestoComponent implements OnInit {
     });
   }
 
-
-  
-  editarGasto(gasto: any) {
-    this.editandoId = gasto.id;
+  editarGasto(gasto: PresupuestoMovimiento) {
+    this.editandoId = gasto.id!;
     this.nuevoGasto = {
-      fecha: gasto.fecha.split('T')[0],
-      tipoGastoId: gasto.tipoGastoId,
-      fondoId: gasto.fondoId,
-      montoCOP: gasto.montoCOP,
-      montoUSD: gasto.montoUSD,
-      descripcion: gasto.descripcion
+      gastoTipoId: gasto.gastoTipoId,
+      montoPresupuestadoCOP: gasto.montoPresupuestadoCOP,
+      montoPresupuestadoUSD: gasto.montoPresupuestadoUSD,
+      mes: gasto.mes,
+      anio: gasto.anio
     };
   }
 
   eliminarGasto(id: number) {
-    if (confirm('¿Estás seguro de eliminar este gasto?')) {
+    if (confirm('¿Estás seguro de eliminar este presupuesto?')) {
       this.http.delete(`${this.apiUrl}/${id}`).subscribe({
         next: () => this.cargarGastos(),
         error: (err) => console.error('Error al eliminar gasto', err)
@@ -168,12 +167,11 @@ export class PresupuestoComponent implements OnInit {
 
   limpiarFormulario() {
     this.nuevoGasto = {
-      fecha: new Date().toISOString().split('T')[0],
-      tipoGastoId: '',
-      fondoId: '',
-      montoCOP: 0,
-      montoUSD: 0,
-      descripcion: ''
+      gastoTipoId: 0,
+      montoPresupuestadoCOP: 0,
+      montoPresupuestadoUSD: 0,
+      mes: this.mesSeleccionado,
+      anio: this.anioSeleccionado
     };
   }
 
@@ -185,10 +183,4 @@ export class PresupuestoComponent implements OnInit {
     const tipo = this.tiposGasto.find(t => t.id === id);
     return tipo ? tipo.nombre : 'Desconocido';
   }
-
-  getNombreFondo(id: number): string {
-    const fondo = this.fondos.find(f => f.id === id);
-    return fondo ? fondo.nombre : 'Desconocido';
-  }
 }
-

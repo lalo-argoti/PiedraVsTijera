@@ -3,29 +3,35 @@
 
   <!-- Filtro por mes y año -->
   <div class="filtro">
-    <label for="mes">Mes:</label>
-    <select id="mes" [(ngModel)]="mesSeleccionado" (change)="cambiarMes()">
-      <option *ngFor="let mes of meses" [value]="mes.id">{{ mes.nombre }}</option>
-    </select>
 
+        <label for="mes">Mes:</label>
+
+<select [(ngModel)]="mesSeleccionado" (change)="cambiarMes()">
+  <option *ngFor="let mes of meses" [value]="mes.id">{{ mes.nombre }}</option>
+</select>
     <label for="anio">Año:</label>
-    <select id="anio" [(ngModel)]="anioSeleccionado" (change)="cambiarMes()">
-      <option *ngFor="let anio of anios" [value]="anio">{{ anio }}</option>
-    </select>
+
+<select [(ngModel)]="anioSeleccionado" (change)="cambiarMes()">
+  <option *ngFor="let anio of anios" [value]="anio">{{ anio }}</option>
+</select>
   </div>
 
-  <!-- Listado de depósitos filtrados -->
-  <div *ngIf="depositosFiltrados.length > 0" class="depositos-listado">
-    <h3>Depósitos en {{ nombreMesSeleccionado }} de {{ anioSeleccionado }}</h3>
-    <ul>
-      <li *ngFor="let deposito of depositosFiltrados">
-        <strong>Fecha:</strong> {{ deposito.encabezado.fecha | date: 'yyyy-MM-dd' }} -
-        <strong>Remitente:</strong> {{ deposito.encabezado.remitente }}
-        <button (click)="cargarDepositoExistente()">Editar</button>
-      </li>
-    </ul>
-  </div>
-  <hr />
+<!-- Listado de depósitos filtrados -->
+<div *ngIf="depositosFiltrados.length > 0" class="depositos-listado">
+  <h3>Depósitos en {{ nombreMesSeleccionado }} de {{ anioSeleccionado }}</h3>
+  <ul>
+    <li *ngFor="let deposito of depositosFiltrados">
+      <strong>Fecha:</strong> {{ deposito.encabezado.fecha | date: 'yyyy-MM-dd' }} -
+      <strong>Remitente:</strong> {{ deposito.encabezado.remitente }}
+      <button *ngIf="deposito.encabezado.id !== undefined"
+        (click)="cargarDepositoExistente(deposito.encabezado.id!)">
+                    Editar
+        </button>
+
+    </li>
+  </ul>
+</div>
+<hr />
 
   <!-- Formulario encabezado -->
   <form (ngSubmit)="onSubmit()">

@@ -22,19 +22,23 @@ namespace pdt.Data
         public DbSet<Deposito> Depositos { get; set; }
         public DbSet<GastoRegistroPlanoDto> GastoRegistroPlanoDtos { get; set; }
         public List<GastoDetalle2Dto> Detalles { get; set; } = new();  
-       
+        public DbSet<DepositoDetalle> DepositosDetalle { get; set; }
+        public DbSet<PresupuestoMovimiento> PresupuestoMovimientos { get; set; }
+
+        
  protected override void OnModelCreating(ModelBuilder modelBuilder)
 {
     modelBuilder.Entity<User>().ToTable("pdt_users");
     modelBuilder.Entity<UserGroup>().ToTable("pdt_users_groups");
     modelBuilder.Entity<GastoTipo>().ToTable("pdt_crtr_gastos_tipo");
     modelBuilder.Entity<FondoMonetario>().ToTable("pdt_fondos_monetarios");
-    modelBuilder.Entity<PresupuestoMovimiento>().ToTable("pdt_presupuesto");
 
     // Aquí ajusta los nombres correctos de las tablas según tu base
     modelBuilder.Entity<GastoRegistro>().ToTable("pdt_gastos_registro");
     modelBuilder.Entity<GastoDetalle>().ToTable("pdt_gasto_detalle");
     modelBuilder.Entity<Deposito>().ToTable("pdt_depositos");
+    modelBuilder.Entity<DepositoDetalle>().ToTable("pdt_depositos_detalle");
+    modelBuilder.Entity<PresupuestoMovimiento>().ToTable("pdt_presupuestos");
     modelBuilder.Entity<GastoRegistroPlanoDto>().HasNoKey(); // <- Esto resuelve el error
 
     // Relaciones
@@ -57,6 +61,13 @@ namespace pdt.Data
               
 
     });
+    
+        modelBuilder.Entity<Deposito>()
+    .HasMany(d => d.Detalles)
+    .WithOne(det => det.Deposito)
+    .HasForeignKey(det => det.DepositoId)
+    .OnDelete(DeleteBehavior.Cascade);
+    
     
     modelBuilder.Entity<Deposito>()
     .Property(d => d.Id)
@@ -95,14 +106,16 @@ namespace pdt.Data
         .HasPrecision(18, 2);
 
     modelBuilder.Entity<PresupuestoMovimiento>()
-        .Property(p => p.MontoPresupuestado)
+        .Property(p => p.MontoPresupuestadoUSD)
         .HasPrecision(18, 2);
 
-    modelBuilder.Entity<Deposito>()
-    .HasMany(d => d.Detalles)
-    .WithOne(det => det.Deposito)
-    .HasForeignKey(det => det.DepositoId)
-    .OnDelete(DeleteBehavior.Cascade);
+    modelBuilder.Entity<PresupuestoMovimiento>()
+        .Property(p => p.MontoPresupuestadoCOP)
+        .HasPrecision(18, 2);
+
+
+
+
 }
 
 

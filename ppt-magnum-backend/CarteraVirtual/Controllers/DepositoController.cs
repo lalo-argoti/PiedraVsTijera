@@ -77,7 +77,7 @@ namespace pdt.Controllers
 [HttpGet]
 public IActionResult GetPorMes([FromQuery] int mes, [FromQuery] int anio)
 {
-    int propietario=1;// = int.Parse(User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value ?? "0");
+    int propietario= int.Parse(User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value ?? "0");
 
     var depositos = _context.Depositos
         .Include(d => d.Detalles)
@@ -152,12 +152,41 @@ public IActionResult GetPorMes([FromQuery] int mes, [FromQuery] int anio)
 
 
         // PUT: api/DepositoController/5
-        [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] object model)
-        {
-            // TODO: Implementar lógica para actualizar un registro
-            return NoContent();
-        }
+[HttpPut("{id}")]
+public async Task<IActionResult> Update(int id, [FromBody] DepositoTransaccionDto transaccion)
+{
+    if (transaccion == null || transaccion.Detalles == null || !transaccion.Detalles.Any())
+        return BadRequest("Debe proporcionar encabezado y al menos un detalle.");
+
+    var deposito = await _context.Depositos
+        .Include(d => d.Detalles)
+        .FirstOrDefaultAsync(d => d.Id == id);
+
+    if (deposito == null)
+        return NotFound();
+
+    // Actualizar encabezado
+    deposito.Fecha = transaccion.Encabezado.Fecha;
+    deposito.Remitente = transaccion.Encabezado.Remitente;
+
+    // Eliminar detalles existentes
+    _context.DepositosDetalle.RemoveRange(deposito.Detalles);
+
+    // Agregar los nuevos detalles
+    deposito.Detalles = transaccion.Detalles.Select(d => new DepositoDetalle
+    {
+        DepositoId = id,
+        FondoId = d.FondoId,
+        MontoCOP = d.MontoCOP,
+        MontoUSD = d.MontoUSD,
+        ReferenciaPago = d.ReferenciaPago
+    }).ToList();
+
+    await _context.SaveChangesAsync();
+
+    return NoContent();
+}
+
 
         // DELETE: api/DepositoController/5
         [HttpDelete("{id}")]

@@ -6,12 +6,18 @@ namespace pdt.Models
     public class PresupuestoMovimiento
     {
         public int Id { get; set; }
-        public int UsuarioId { get; set; }
-        public int GastoTipoId { get; set; }
-        public int Mes { get; set; }
-        public decimal MontoPresupuestado { get; set; }
 
-        public User? Usuario { get; set; }
+        [ForeignKey("GastoTipo")]
+        public int GastoTipoId { get; set; }
+
+        public int Mes { get; set; }
+
+        public int Anio { get; set; }
+
+        public decimal MontoPresupuestadoUSD { get; set; }
+
+        public decimal MontoPresupuestadoCOP { get; set; }
+
         public GastoTipo? GastoTipo { get; set; }
     }
 }

@@ -1,31 +1,42 @@
-<div class="form-container">
-  <h2 class="form-title">Comparativo Presupuesto vs. Ejecución</h2>
+<div class="grafico-container">
+  <h2 class="form-title">Gráfico Presupuestal por Tipo de Gasto</h2>
 
   <!-- Filtros -->
-  <div class="form-group">
-    <div class="filtros-container">
-      <div class="form-group">
-        <label class="form-label">Fecha Inicio</label>
-        <input type="date" class="form-input" [(ngModel)]="fechaInicio">
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Fecha Fin</label>
-        <input type="date" class="form-input" [(ngModel)]="fechaFin">
-      </div>
-
-      <button class="btn btn-primary" (click)="consultarDatos()" [disabled]="cargando">
-        {{ cargando ? 'Cargando...' : 'Generar Gráfico' }}
-      </button>
+  <div class="filtros-container">
+    <div class="form-group">
+      <label for="mes">Mes</label>
+      <select id="mes" class="form-input" [(ngModel)]="mesSeleccionado">
+        <option *ngFor="let mes of meses" [value]="mes.id">{{ mes.nombre }}</option>
+      </select>
     </div>
+
+    <div class="form-group">
+      <label for="anio">Año</label>
+      <select id="anio" class="form-input" [(ngModel)]="anioSeleccionado">
+        <option *ngFor="let anio of anios" [value]="anio">{{ anio }}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="tipoGasto">Tipo de Gasto</label>
+      <select id="tipoGasto" class="form-input" [(ngModel)]="tipoGastoIdSeleccionado">
+        <option [value]="null" disabled selected>Seleccione</option>
+        <option *ngFor="let tipo of tiposGasto" [value]="tipo.id">{{ tipo.nombre }}</option>
+      </select>
+    </div>
+
+    <button class="btn btn-primary" (click)="consultarDatos()" [disabled]="cargando">
+      {{ cargando ? 'Cargando...' : 'Consultar' }}
+    </button>
   </div>
 
+  <!-- Mensaje de error -->
   <div *ngIf="error" class="alert alert-danger">
     {{ error }}
   </div>
 
   <!-- Gráfico -->
-  <div class="chart-container">
+  <div *ngIf="barChartData.datasets.length > 0 && !cargando" class="grafico-wrapper">
     <canvas baseChart
       [data]="barChartData"
       [options]="barChartOptions"
@@ -34,19 +45,8 @@
     </canvas>
   </div>
 
-  <!-- Leyenda -->
-  <div class="leyenda">
-    <div class="leyenda-item">
-      <span class="leyenda-color" style="background-color: #3b82f6;"></span>
-      <span>Presupuestado</span>
-    </div>
-    <div class="leyenda-item">
-      <span class="leyenda-color" style="background-color: #10b981;"></span>
-      <span>Ejecutado</span>
-    </div>
-    <div class="leyenda-item">
-      <span class="leyenda-color" style="background-color: #f59e0b;"></span>
-      <span>Diferencia (Presupuesto - Ejecución)</span>
-    </div>
+  <!-- Mensaje sin datos -->
+  <div *ngIf="!barChartData?.datasets?.length && !cargando" class="text-muted">
+    No hay datos para mostrar. Seleccione filtros y consulte.
   </div>
 </div>
