@@ -18,7 +18,7 @@ export class GraficoComponent implements OnInit {
   public barChartOptions: ChartConfiguration['options'] = {
     responsive: true,
     scales: {
-      x: { stacked: true },
+      x: { stacked: false },
       y: {
         stacked: false,
         beginAtZero: true,
