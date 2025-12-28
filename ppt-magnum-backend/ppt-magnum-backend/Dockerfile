@@ -1,26 +1,20 @@
-# Usa una imagen base de .NET SDK 8.0 para construir la aplicación
+# ========= BUILD =========
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copia el archivo .csproj y restaura las dependencias
-COPY ["ppt-magnum-backend.csproj", "./"]
-RUN dotnet restore "ppt-magnum-backend.csproj"
+# Restore cacheable
+COPY ppt-magnum-backend.csproj .
+RUN dotnet restore
 
-# Copia el resto del código fuente y construye la aplicación
+# Código fuente
 COPY . .
-RUN dotnet build "ppt-magnum-backend.csproj" -c Release -o /app/build
+RUN dotnet publish -c Release -o /app/out --no-restore
 
-# Publica la aplicación
-FROM build AS publish
-RUN dotnet publish "ppt-magnum-backend.csproj" -c Release -o /app/publish
-
-# Usa una imagen base de .NET Runtime 8.0 para ejecutar la aplicación
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+# ========= RUNTIME =========
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=publish /app/publish .
 
-# Expone el puerto en el que la aplicación escucha
+COPY --from=build /app/out .
+
 EXPOSE 8000
-
-# Define el comando de entrada
 ENTRYPOINT ["dotnet", "ppt-magnum-backend.dll"]
