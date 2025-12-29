@@ -34,8 +34,17 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 // Configuración de la cadena de conexión a la base de datos
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
-        new MySqlServerVersion(new Version(8, 0, 23)))); // Ajusta la versión según tu servidor MySQL
+{
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        ServerVersion.AutoDetect(
+            builder.Configuration.GetConnectionString("DefaultConnection")
+        )
+    )
+    .EnableSensitiveDataLogging()
+    .LogTo(Console.WriteLine, LogLevel.Information);
+});
+
 
 // Agregar servicios al contenedor
 builder.Services.AddControllers(); // Registra los servicios de controladores
@@ -49,6 +58,7 @@ if (app.Environment.IsDevelopment())
     // Muestra una página de error detallada en desarrollo
     app.UseDeveloperExceptionPage();
 }
+app.UseDeveloperExceptionPage();
 
 // Configuración de CORS: Aplicar la política CORS definida
 app.UseCors("Front");

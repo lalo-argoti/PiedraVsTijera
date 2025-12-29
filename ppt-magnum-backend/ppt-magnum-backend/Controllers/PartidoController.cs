@@ -45,7 +45,7 @@ namespace ppt.Controllers
                 2 => "papel",
                 3 => "tijera",
                 _ => "movimiento desconocido"
-            };
+	            };
 
             if (movimiento == 0)
             {
@@ -87,15 +87,40 @@ namespace ppt.Controllers
             }
         }
 
-        [HttpGet("estado") ]
-        public async Task<IActionResult> ObtenerEstadoJuego([FromQuery] string codigo)
-        {
-            var estadoJuego = await _partidaService.ObtenerEstadoJuegoAsync(codigo);
 
-            if (estadoJuego == null)
-                return CreateJsonResponse("Juego no encontrado."+estadoJuego,"","", 793);
+    	[HttpGet("estado")]
+public async Task<IActionResult> ObtenerEstadoJuego([FromQuery] string codigo)
+{
+    var estadoJuego = await _partidaService.ObtenerEstadoJuegoAsync(codigo);
 
-            return CreateJsonResponse("Estado del juego obtenido correctamente.","","", 973);
-        }
+    if (estadoJuego == null)
+        return CreateJsonResponse("Juego no encontrado.", "", "", 793);
+
+    // --- Enriquecemos con info adicional desde SQL (opcional) ---
+    string puntos = "";
+    try
+    {
+        puntos = await _partidaService.Puntos(codigo); // Reutilizamos método existente
+    }
+    catch (Exception ex)
+    {
+        puntos = "0";
+    }
+
+    return CreateJsonResponse(
+        "Estado del juego obtenido correctamente.",
+        "",    // Movimientos o jugador principal opcional
+        puntos,
+        973
+    );
+}
+
+
+	[HttpGet("ping")]
+	public IActionResult Ping()
+	{
+   		 return Ok(new { status = "ok", time = DateTime.UtcNow });
+	}
+
     }
 }
